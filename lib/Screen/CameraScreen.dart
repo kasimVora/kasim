@@ -20,13 +20,18 @@ class _CameraScreenState extends State<CameraScreen> {
   List<Filter> filters = presetFiltersList;
   int camIndex = 0, mode = 0, camMode = 0;
   bool isStart = false;
+  double scale = 0.0,max = 0.0,min = 0.0;
 
   initCamera(CameraDescription camera) {
     controller = CameraController(camera, ResolutionPreset.ultraHigh);
-    controller.initialize().then((_) {
+    controller.initialize().then((_) async{
       if (!mounted) {
         return;
       }
+       max = await controller.getMaxZoomLevel();
+       min = await controller.getMinZoomLevel();
+       scale = min;
+       print("object");
       setState(() {});
     }).catchError((Object e) {
       if (e is CameraException) {
@@ -59,20 +64,56 @@ class _CameraScreenState extends State<CameraScreen> {
           ] else ...[
             Stack(
               children: [
-               GestureDetector(
+                GestureDetector(
+
+                  // onScaleUpdate: (details) async{
+                  //   var maxZoomLevel = await controller.getMaxZoomLevel();
+                  //   // just calling it dragIntensity for now, you can call it whatever you like.
+                  //   var dragIntensity = details.scale;
+                  //   if (dragIntensity < 1) {
+                  //     // 1 is the minimum zoom level required by the camController's method, hence setting 1 if the user zooms out (less than one is given to details when you zoom-out/pinch-in).
+                  //     controller.setZoomLevel(1);
+                  //   } else if (dragIntensity > 1 && dragIntensity < maxZoomLevel) {
+                  //     // self-explanatory, that if the maxZoomLevel exceeds, you will get an error (greater than one is given to details when you zoom-in/pinch-out).
+                  //     controller.setZoomLevel(dragIntensity);
+                  //   } else {
+                  //     // if it does exceed, you can provide the maxZoomLevel instead of dragIntensity (this block is executed whenever you zoom-in/pinch-out more than the max zoom level).
+                  //     controller.setZoomLevel(maxZoomLevel);
+                  //   }
+                  // },
+
                   child: CameraPreview(controller),
-                ) ,
-                !isStart ?  IconButton(
-                  onPressed: () {
-                    camMode == 0 ? camMode = 1 : camMode = 0;
-                    setState(() {});
+                ),
+                !isStart
+                    ? IconButton(
+                        onPressed: () {
+                          camMode == 0 ? camMode = 1 : camMode = 0;
+                          setState(() {});
+                        },
+                        icon: Icon(camMode != 0
+                            ? Icons.camera_alt
+                            : Icons.videocam_sharp),
+                        color: Colors.white,
+                        iconSize: 35,
+                      )
+                    : const SizedBox(),
+                Positioned(
+                  bottom: 0,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Slider(thumbColor: Colors.transparent,
+
+                  min: min,
+                  max: max,
+                  value: scale,
+                  onChanged: (value) {
+                      setState(() {
+                        scale = value;
+                        controller.setZoomLevel(scale);
+                      });
                   },
-                  icon: Icon(
-                      camMode != 0 ?   Icons.camera_alt : Icons.videocam_sharp
-                  ),
-                  color: Colors.white,
-                  iconSize: 35,
-                ): const SizedBox(),
+                ),
+                    ))
               ],
             ),
             const SizedBox(
@@ -82,12 +123,20 @@ class _CameraScreenState extends State<CameraScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  onPressed: () =>toggleFlash(),
-                  icon: Icon(mode == 0 ? Icons.flash_on : mode == 1 ? Icons.flash_auto : Icons.flash_off),
+                  onPressed: () => toggleFlash(),
+                  icon: Icon(mode == 0
+                      ? Icons.flash_on
+                      : mode == 1
+                          ? Icons.flash_auto
+                          : Icons.flash_off),
                   color: Colors.white,
                   iconSize: 35,
                 ),
-                camMode != 0 ?  isStart ? stopVideoButton() : startVideoButton() : imageButton(),
+                camMode != 0
+                    ? isStart
+                        ? stopVideoButton()
+                        : startVideoButton()
+                    : imageButton(),
                 IconButton(
                   onPressed: () {
                     toggleCam();
@@ -138,7 +187,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
-  videoButtons(){
+  videoButtons() {
     isStart ? stopVideoButton() : startVideoButton();
   }
 
@@ -149,17 +198,20 @@ class _CameraScreenState extends State<CameraScreen> {
         height: 70,
         width: 70,
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.white, width: 4),
-            borderRadius: const BorderRadius.all(Radius.circular(40)),
-            color: Colors.white,
-        ),child: Container(
-
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.transparent, width: 5),
-            borderRadius: const BorderRadius.all(Radius.circular(50)),
-            color: Colors.black),
-        child: const Icon(Icons.square,color: Colors.red,size: 30,)
-      ),
+          border: Border.all(color: Colors.white, width: 4),
+          borderRadius: const BorderRadius.all(Radius.circular(40)),
+          color: Colors.white,
+        ),
+        child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.transparent, width: 5),
+                borderRadius: const BorderRadius.all(Radius.circular(50)),
+                color: Colors.black),
+            child: const Icon(
+              Icons.square,
+              color: Colors.red,
+              size: 30,
+            )),
       ),
     );
   }
@@ -195,7 +247,6 @@ class _CameraScreenState extends State<CameraScreen> {
     try {
       final image = await controller.takePicture();
       await getImage(image);
-
     } catch (e) {
       print(e);
     }
