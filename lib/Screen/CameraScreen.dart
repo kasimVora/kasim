@@ -6,7 +6,7 @@ import 'package:photofilters/widgets/photo_filter.dart';
 import 'package:image/image.dart' as imageLib;
 
 import '../main.dart';
-import 'PhotoPrev.dart';
+import 'CreatePost.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
@@ -264,7 +264,7 @@ class _CameraScreenState extends State<CameraScreen> {
           filters: presetFiltersList,
           filename: photo.path.split('/').last,
           loader: const Center(child: CircularProgressIndicator()),
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
         ),
       ),
     );
@@ -278,7 +278,7 @@ class _CameraScreenState extends State<CameraScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PhotoPrev(image: imageFile.path),
+          builder: (context) => CreatePost(image: imageFile.path),
         ),
       );
       print(imageFile.path);

@@ -1,11 +1,14 @@
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase__test/Helper/Color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'Screen/CameraScreen.dart';
+import 'Screen/HomeScreen.dart';
 import 'Screen/SplashScreen.dart';
 import 'firebase_options.dart';
 
@@ -13,6 +16,8 @@ import 'firebase_options.dart';
 final FirebaseAuth authInst = FirebaseAuth.instance;
 FirebaseStorage storageRef = FirebaseStorage.instance;
 final userRef = FirebaseFirestore.instance.collection('user');
+final chatRef = FirebaseFirestore.instance.collection('chatRoom');
+FirebaseMessaging messaging = FirebaseMessaging.instance;
 late List<CameraDescription> cameras;
 
 void main() async {
@@ -32,8 +37,9 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+          bottomAppBarColor:blackColor,
       ),
-      home:  const CameraScreen(),
+      home:  const HomeScreen(),
     );
   }
 }

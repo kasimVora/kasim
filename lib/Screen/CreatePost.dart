@@ -6,15 +6,15 @@ import 'package:photofilters/filters/filters.dart';
 import 'package:photofilters/filters/preset_filters.dart';
 import 'package:photofilters/widgets/photo_filter.dart';
 
-class PhotoPrev extends StatefulWidget {
+class CreatePost extends StatefulWidget {
   String image;
-   PhotoPrev({Key? key,required this.image}) : super(key: key);
+   CreatePost({Key? key,required this.image}) : super(key: key);
 
   @override
-  State<PhotoPrev> createState() => _PhotoPrevState();
+  State<CreatePost> createState() => _CreatePostState();
 }
 
-class _PhotoPrevState extends State<PhotoPrev> {
+class _CreatePostState extends State<CreatePost> {
 
   List<Filter> filters = presetFiltersList;
 
@@ -29,9 +29,11 @@ class _PhotoPrevState extends State<PhotoPrev> {
             SizedBox(height: 20,),
             Row(
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  child: Image.file(File(widget.image,),fit: BoxFit.cover,height: 20,width: 20,),
+                ClipOval(
+                  child: SizedBox.fromSize(
+                    size: const Size.fromRadius(20), // Image radius
+                    child:  Image.file(File(widget.image),fit: BoxFit.fill),
+                  ),
                 ),
                 Expanded(
                     child: TextFormField(

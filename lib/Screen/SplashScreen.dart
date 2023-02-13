@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
+import 'MediaPicker.dart';
 import 'HomeScreen.dart';
 import 'LoginScreen.dart';
 class SplashScreen extends StatefulWidget {

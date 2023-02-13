@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/style.dart';
 
+
+import '../Helper/OTP.dart';
 import '../main.dart';
 import 'HomeScreen.dart';
+import 'UserProfile.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,8 +18,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  final phone_number = TextEditingController();
-  OtpFieldController otpController = OtpFieldController();
+  final phone_number = TextEditingController(text: "9664818767");
+
+  final con_1 = TextEditingController();
+  final con_2 = TextEditingController();
+  final con_3 = TextEditingController();
+  final con_4 = TextEditingController();
+  final con_5 = TextEditingController();
+  final con_6 = TextEditingController();
+
+  final phon_focus = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
             TextFormField(
               controller: phone_number,
               maxLength: 10,
+              focusNode: phon_focus,
               decoration: InputDecoration(
                 fillColor: Colors.white,
                 labelText: "Mobile Number",
@@ -74,27 +85,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> login() async {
 
-
-      authInst.verifyPhoneNumber(
-          phoneNumber: "+91${phone_number.text.trim()}",
-          timeout: const Duration(seconds: 60),
-          verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {  },
-          codeAutoRetrievalTimeout: (String verificationId) {  },
-          codeSent: (String verificationId, int? forceResendingToken) {
-            print(verificationId);
-           if(verificationId.isNotEmpty){
-             showOTP(verificationId);
-           }
-
-          },
-          verificationFailed: (FirebaseAuthException error) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.message.toString())));
+    phon_focus.unfocus();
+    authInst.verifyPhoneNumber(
+        phoneNumber: "+91${phone_number.text.trim()}",
+        timeout: const Duration(seconds: 3),
+        verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {
+          print("phoneAuthCredential");
+          print(phoneAuthCredential);
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {  },
+        codeSent: (String verificationId, int? forceResendingToken) {
+          print(verificationId);
+          if(verificationId.isNotEmpty){
+            showOTP(verificationId);
           }
-      );
+
+        },
+        verificationFailed: (FirebaseAuthException error) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.message.toString())));
+        }
+    );
 
 
 
-   //   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const HomeScreen()));
+    //   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const HomeScreen()));
 
   }
 
@@ -104,47 +118,38 @@ class _LoginScreenState extends State<LoginScreen> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            title: Text("Give the code?"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                OTPTextField(
-                    controller: otpController,
-                    length: 6,
-                    width: MediaQuery.of(context).size.width,
-                    textFieldAlignment: MainAxisAlignment.spaceAround,
-                    fieldWidth: 45,
-                    fieldStyle: FieldStyle.box,
-                    outlineBorderRadius: 15,
-                    style: TextStyle(fontSize: 17),
-                    onChanged: (pin) {
-                      print("Changed: " + pin);
-                    },
-                    onCompleted: (pin) {
-                      print("Completed: " + otpController.toString());
-                    }),
-              ],
+            title: Text("Enter OTP"),
+            insetPadding: EdgeInsets.zero,
+            content:  SizedBox(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  OTP(con_1, con_2, con_3, con_4, con_5, con_6,
+                          (val1, val2, val3, val4, val5, val6) {
+                        setState(() {
+                          con_1.text = val1;
+                          con_2.text = val2;
+                          con_3.text = val3;
+                          con_4.text = val4;
+                          con_5.text = val5;
+                          con_6.text = val6;
+                        });
+                      }),
+                ],
+              ),
             ),
-            actions: <Widget>[
-              TextButton(
-                child: Text("Confirm"),
-                onPressed: () async{
-                  final code = otpController.toString();
-                  AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code);
+            actions: [
+              TextButton(onPressed: () async{
+                String pin = con_1.text+con_2.text+con_3.text+con_4.text+con_5.text+con_6.text;
+                AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: pin);
 
-                  UserCredential result = await authInst.signInWithCredential(credential);
+                await authInst.signInWithCredential(credential).then((value) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile(uid: value.user!.uid, phone: value.user!.phoneNumber!,)));
+                }).catchError((e){
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message.toString())));
+                });
 
-                  print(result.user);
-
-                  if(result.user != null){
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => HomeScreen()
-                    ));
-                  }else{
-                    print("Error");
-                  }
-                },
-              )
+              }, child: Text("Verify"))
             ],
           );
         }
@@ -152,5 +157,3 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 }
-
-
