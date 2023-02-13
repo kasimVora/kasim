@@ -17,6 +17,8 @@ final FirebaseAuth authInst = FirebaseAuth.instance;
 FirebaseStorage storageRef = FirebaseStorage.instance;
 final userRef = FirebaseFirestore.instance.collection('user');
 final chatRef = FirebaseFirestore.instance.collection('chatRoom');
+final postRef = FirebaseFirestore.instance.collection('Post');
+
 FirebaseMessaging messaging = FirebaseMessaging.instance;
 late List<CameraDescription> cameras;
 
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
           bottomAppBarColor:blackColor,
       ),
-      home:  const HomeScreen(),
+      home:  const SplashScreen(),
     );
   }
 }

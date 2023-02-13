@@ -4,7 +4,7 @@ import 'package:firebase__test/Screen/SearchScreen.dart';
 import 'package:flutter/material.dart';import 'MediaPicker.dart';
 
 
-import 'MainScreen.dart';
+import 'PostScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

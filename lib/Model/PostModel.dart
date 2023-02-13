@@ -4,10 +4,11 @@ class PostModel {
   String userName = '';
   String postUrl = '';
   String postType = '';
-  String created = '';
-  String likeCount = '';
-  String commentsCount = '';
+  DateTime? created;
+  List likeCount = [];
+  List commentsCount = [];
   String caption = '';
+  String location = '';
 
   PostModel({
        required this.postId,
@@ -17,6 +18,7 @@ class PostModel {
        required this.postType,
        required this.likeCount,
        required this.commentsCount,
+       required this.location,
        required this.caption,
        required this.created});
 
@@ -25,11 +27,20 @@ class PostModel {
     userId = json['user_id'];
     caption = json['caption'];
     userName = json['user_name'];
-    commentsCount = json['commentsCount'];
+    location = json['location'];
+    if(json['commentsCount']!= null && json['commentsCount'].isNotEmpty){
+      for(var i in json['commentsCount']) {
+        commentsCount.add(i);
+      }
+    }
     postUrl = json['post_url'];
     postType = json['post_type'];
-    created = json['created'];
-    likeCount = json['likeCount'];
+    created = DateTime.fromMicrosecondsSinceEpoch(json['created']);
+    if(json['likeCount']!= null && json['likeCount'].isNotEmpty){
+      for(var i in json['likeCount']) {
+        likeCount.add(i);
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -37,11 +48,12 @@ class PostModel {
     data['post_Id'] = postId;
     data['commentsCount'] = commentsCount;
     data['caption'] = caption;
+    data['location'] = location;
     data['user_id'] = userId;
     data['user_name'] = userName;
     data['post_url'] = postUrl;
     data['post_type'] = postType;
-    data['created'] = created;
+    data['created'] = created!.microsecondsSinceEpoch;
     data['likeCount'] = likeCount;
     return data;
   }

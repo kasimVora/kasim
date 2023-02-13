@@ -1,161 +1,166 @@
-import 'dart:convert';
-import 'dart:io';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase__test/Screen/HomeScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase__test/Helper/Color.dart';
+import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
+import 'package:firebase__test/Helper/Style.dart';
+import 'package:firebase__test/Model/PostModel.dart';
+import 'package:firebase__test/Model/UserModel.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:uuid/uuid.dart';
-import '../Model/UserModel.dart';
-import '../Helper/Utility.dart';
+
 import '../main.dart';
-import 'LoginScreen.dart';
 
 class UserProfile extends StatefulWidget {
-  String uid,phone;
-   UserProfile({Key? key,required this.uid,required this.phone}) : super(key: key);
+  String uid;
+   UserProfile({Key? key,required this.uid}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
-  final userName = TextEditingController();
-
-  File? image;
-
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      appBar: null,
+    return Scaffold(
+      backgroundColor: blackColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const Text("Complete Profile",style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold,fontSize: 30),),
-
-                const SizedBox(height: 20,),
-                Stack(
-                  children: [
-                    Center(
-                      child: ClipOval(
-                        child: SizedBox.fromSize(
-                          size: const Size.fromRadius(50), // Image radius
-                          child: image!=null ? Image.file(image!,fit: BoxFit.fill,) :  Image.asset('assets/logo.jpg',fit: BoxFit.fill),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                        bottom: 0,
-                        right: MediaQuery.of(context).size.width/3.5,
-                        child: Container(
-                          padding: const EdgeInsets.all(0),
-                          decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(50)),
-                              color: Colors.white
-                          ),
-                          child: IconButton(onPressed: () async {
-                            final ImagePicker _picker = ImagePicker();
-                            final XFile? file = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 55);
-                            image = File(file!.path);
-                            setState(() {});
-                          }, icon: const Icon(Icons.camera_alt,size: 35,color: Colors.blue,)
-                          ),
-                        )
-                    )
-                  ],
-                ),
-
-                const SizedBox(height: 20,),
-                TextFormField(
-                  controller: userName,
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10.0),
-                    border: UnderlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(10)),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.lightBlueAccent, width: 1.3),
-
-                      //gapPadding: 10,
-                    ),
-                    isDense: true,
-                    hintText: "User Name",
-                    counterText: "",
-                  ),
-                ),
-                const SizedBox(height: 30,),
-                Center(
-                  child: TextButton(
-                      onPressed: () async => await addImageToFirebase(),
-                      child: const Text("Complete")
-                  ),
-                ),
-                const SizedBox(height: 20,),
-              ],
+        child: Column(
+          children: [
+            StreamBuilder(
+              stream: userRef.doc(widget.uid).snapshots(),
+              builder: (_, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if(snapshot.hasData){
+                  return userList(snapshot);
+                }else{
+                  return const SizedBox();
+                }
+              },
             ),
-          ),
+            const SizedBox(height: 50,),
+            StreamBuilder(
+              stream: postRef.doc(widget.uid).collection(widget.uid).snapshots(),
+              builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if(snapshot.hasData){
+                  return postList(snapshot);
+                }else{
+                  return const SizedBox();
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Future<void> addImageToFirebase() async {
-    showDialogWithLoad(context);
-    String url = "";
-    final storageRef = FirebaseStorage.instance.ref()
-        .child("profilePics")
-        .child(widget.uid)
-        .putFile(image!);
+  Widget userList(AsyncSnapshot<DocumentSnapshot> snapshot) {
 
-    storageRef.snapshotEvents.listen((TaskSnapshot taskSnapshot) async {
-      switch (taskSnapshot.state) {
-        case TaskState.running:
-          final progress = 100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
-          print("Upload is $progress% complete.");
-          break;
-        case TaskState.paused:
-          print("Upload is paused.");
-          break;
-        case TaskState.canceled:
-          print("Upload was canceled");
-          break;
-        case TaskState.error:
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(TaskState.error.toString())));
-          break;
-        case TaskState.success:
-          url = await taskSnapshot.ref.getDownloadURL();
-          saveUser(url);
-          break;
-      }
-    });
+    UserModel user = UserModel.fromJson(snapshot.data!.data() as Map<String,dynamic>);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 5,),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(user.userName,style: whiteBoldText18),
+          ),
+          const SizedBox(height: 5,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CachedNetworkImage(
+                height: 100,width: 100,
+                imageUrl: user.imgUrl,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.person),
+              ),
+              const SizedBox(width: 20,),
+              Column(
+                children: [
+                  Text(user.posts.length.toString(),style: whiteBoldText14,),
+                  Text("post",style: whiteNormalText13),
+                ],
+              ),
+              const SizedBox(width: 20,),
+              Column(
+                children: [
+                  Text(user.followers.length.toString(),style: whiteBoldText14),
+                  Text("followers",style: whiteNormalText13),
+                ],
+              ),
+              const SizedBox(width: 10,),
+              Column(
+                children: [
+                  Text(user.following.length.toString(),style: whiteBoldText14),
+                   Text("following",style: whiteNormalText13),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10,),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(7)),
+                border: Border.all(color: whiteColor,width: 1.2)
+            ),
+            child: Text(loggedInUser!.uid == widget.uid ? "Edit profile" :loggedInUser!.following.contains(widget.uid) ? "Unfollow" : "Follow",textAlign: TextAlign.center,style: whiteBoldText14,),
+          )
+        ],
+      ),
+    );
   }
+  
+  Widget postList(AsyncSnapshot<QuerySnapshot> snapshot) {
+   List<PostModel> posts = [];
 
-  void saveUser(String url) {
-    messaging.getToken().then((value) {
-      UserModel user = UserModel(userName: userName.text, phoneNumber: widget.phone, uid: widget.uid, imgUrl: url, deviceToken: value!);
-      print(jsonEncode(user));
-      userRef.doc(user.uid).set(user.toJson()).
-      whenComplete(() {
-        Navigator.pop(context);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-      }).
-      catchError((e){
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-      });
-    });
+   print(snapshot.data!.docs.length);
+   for(int i = 0 ;i<snapshot.data!.docs.length;i++){
+     var  e = snapshot.data!.docs[i].data() as Map<String,dynamic>;
+     print(e);
+     posts.add(PostModel.fromJson(e));
+   }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child:  GridView.builder(
+        shrinkWrap: true,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4),
+        itemBuilder: (_, i) {
+
+          return  CachedNetworkImage(
+            height: 200,width: 200,
+            imageUrl: posts[i].postUrl,
+            imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            placeholder: (context, url) =>  Container(
+              height: 150,width: 150,color: greysecond,
+            ),
+            errorWidget: (context, url, error) => const Icon(Icons.person),
+          );
+        },
+        itemCount: posts.length),
+    );
   }
 }
-

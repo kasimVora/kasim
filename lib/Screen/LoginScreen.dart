@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import '../Helper/OTP.dart';
 import '../main.dart';
 import 'HomeScreen.dart';
-import 'UserProfile.dart';
+import 'CompleteProfile.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: pin);
 
                 await authInst.signInWithCredential(credential).then((value) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile(uid: value.user!.uid, phone: value.user!.phoneNumber!,)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CompleteProfile(uid: value.user!.uid, phone: value.user!.phoneNumber!,)));
                 }).catchError((e){
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message.toString())));
                 });

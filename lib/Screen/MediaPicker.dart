@@ -11,6 +11,7 @@ import 'package:storage_path/storage_path.dart';
 import '../Helper/DropDownWidget.dart';
 import '../Model/DropDownModel.dart';
 import '../Model/FileModel.dart';
+import 'CreatePost.dart';
 
 class MediaPicker extends StatefulWidget {
   const MediaPicker({Key? key}) : super(key: key);
@@ -61,15 +62,20 @@ class _MediaPickerState extends State<MediaPicker> {
         child: Column(
           children: <Widget>[
 
-            const Align(
+             Align(
               alignment: Alignment.centerRight,
-              child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ),
+              child: TextButton(
+                  onPressed: (){
+                    if(image.isNotEmpty){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreatePost(image: image),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text("Next") ),
             ),
             SizedBox(
                 height: MediaQuery.of(context).size.height * 0.40,
@@ -100,8 +106,7 @@ class _MediaPickerState extends State<MediaPicker> {
             ),
             selectedModel == null
                 ? Container()
-                : Expanded(
-                  child: GridView.builder(
+                : Expanded(child: GridView.builder(
                       shrinkWrap: true,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
@@ -121,8 +126,7 @@ class _MediaPickerState extends State<MediaPicker> {
                           },
                         );
                       },
-                      itemCount: selectedModel!.files.length),
-                )
+                      itemCount: selectedModel!.files.length),)
           ],
         ),
       ),

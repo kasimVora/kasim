@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../Helper/FirebaseHelperFunction.dart';
 import '../main.dart';
 import 'MediaPicker.dart';
 import 'HomeScreen.dart';
@@ -19,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(const Duration(seconds: 2), () async{
       if(authInst.currentUser!= null) {
+       loggedInUser =  await getUserFromUid(authInst.currentUser!.uid);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
       }else{
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
