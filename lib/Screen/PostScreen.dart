@@ -158,6 +158,7 @@ class _PostScreenState extends State<PostScreen> {
 
   Widget postList(AsyncSnapshot<QuerySnapshot> snapshot) {
     List<PostModel> posts = [];
+    print(snapshot.data!.docs.length);
 
     for(var i  in snapshot.data!.docs){
       if(loggedInUser!.following.contains(i.id)){

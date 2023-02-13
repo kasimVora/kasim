@@ -5,6 +5,7 @@ import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
 import 'package:firebase__test/Helper/Style.dart';
 import 'package:firebase__test/Model/PostModel.dart';
 import 'package:firebase__test/Model/UserModel.dart';
+import 'package:firebase__test/Screen/EditProfile.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -62,9 +63,11 @@ class _UserProfileState extends State<UserProfile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 5,),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(user.userName,style: whiteBoldText18),
+          Row(
+            children: [
+              IconButton(onPressed: ()=> Navigator.pop(context), icon: Icon(Icons.arrow_back,color: whiteColor,)),
+              Text(user.userName,style: whiteBoldText18),
+            ],
           ),
           const SizedBox(height: 5,),
           Row(
@@ -109,14 +112,43 @@ class _UserProfileState extends State<UserProfile> {
             ],
           ),
           const SizedBox(height: 10,),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(7)),
-                border: Border.all(color: whiteColor,width: 1.2)
+          GestureDetector(
+            onTap: (){
+              if(loggedInUser!.following.contains(widget.uid)){
+                //unfollow
+
+                List<String> followers = user.followers;
+                followers.remove(loggedInUser!.uid);
+                userRef.doc(widget.uid).update({"followers": followers});
+
+                List<String> followings = loggedInUser!.following;
+                followings.remove(user.uid);
+                userRef.doc(loggedInUser!.uid).update({"following": followings});
+
+              }else if(loggedInUser!.uid == widget.uid){
+                //edit profile
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfile()));
+              }else{
+                //follow
+                List<String> followers = user.followers;
+                followers.add(loggedInUser!.uid);
+                userRef.doc(widget.uid).update({"followers": followers});
+
+                List<String> followings = loggedInUser!.following;
+                followings.add(user.uid);
+                userRef.doc(loggedInUser!.uid).update({"following": followings});
+
+              }
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(7)),
+                  border: Border.all(color: whiteColor,width: 1.2)
+              ),
+              child: Text(loggedInUser!.uid == widget.uid ? "Edit profile" :loggedInUser!.following.contains(widget.uid) ? "Unfollow" : "Follow",textAlign: TextAlign.center,style: whiteBoldText14,),
             ),
-            child: Text(loggedInUser!.uid == widget.uid ? "Edit profile" :loggedInUser!.following.contains(widget.uid) ? "Unfollow" : "Follow",textAlign: TextAlign.center,style: whiteBoldText14,),
           )
         ],
       ),

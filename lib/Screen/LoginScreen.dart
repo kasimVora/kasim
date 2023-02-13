@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
+import 'package:firebase__test/Model/UserModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -143,8 +145,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 String pin = con_1.text+con_2.text+con_3.text+con_4.text+con_5.text+con_6.text;
                 AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: pin);
 
-                await authInst.signInWithCredential(credential).then((value) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CompleteProfile(uid: value.user!.uid, phone: value.user!.phoneNumber!,)));
+                await authInst.signInWithCredential(credential).then((value) async{
+
+                  await userRef.doc(value.user!.uid).get().then((doc) {
+                    if(doc.exists){
+                      loggedInUser = UserModel.fromJson(doc.data()!);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                    }else{
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => CompleteProfile(uid: value.user!.uid, phone: value.user!.phoneNumber!,)));
+                    }
+                  });
+
                 }).catchError((e){
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message.toString())));
                 });

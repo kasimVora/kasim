@@ -4,9 +4,9 @@ class UserModel {
   String userName = '';
   String imgUrl = '';
   String deviceToken = '';
-  List followers = [];
-  List following = [];
-  List posts = [];
+  List<String> followers = [];
+  List<String> following = [];
+  List<String> posts = [];
 
   UserModel({
       required  this.phoneNumber,

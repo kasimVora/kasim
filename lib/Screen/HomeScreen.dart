@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:firebase__test/Helper/Color.dart';
 import 'package:firebase__test/Screen/ChatScreen.dart';
 import 'package:firebase__test/Screen/SearchScreen.dart';
-import 'package:flutter/material.dart';import 'MediaPicker.dart';
+import 'package:firebase__test/Screen/SplashScreen.dart';
+import 'package:flutter/material.dart';import '../Helper/FirebaseHelperFunction.dart';
+import '../Model/UserModel.dart';
+import '../main.dart';
+import 'MediaPicker.dart';
 
 
 import 'PostScreen.dart';
@@ -18,6 +24,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget currentScreen = PostScreen();
   String appBarText = "Home Screen";
 
+  @override
+  void initState() {
+    super.initState();
+    if(authInst.currentUser!=null){
+      final docRef = userRef.doc(authInst.currentUser!.uid);
+      docRef.snapshots().listen((event) {
+        loggedInUser = UserModel.fromJson(event.data()!);
+        print(jsonEncode(loggedInUser));
+      },
+        onError: (error) => print("Listen failed: $error"),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +70,16 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (value){
           setState(() {
             selectedIndex = value;
-            selectedIndex == 0 ? currentScreen = const PostScreen() : selectedIndex == 1 ? currentScreen = const MediaPicker() :selectedIndex == 2 ? currentScreen = const SearchScreen(): currentScreen = const ChatScreen();
+            selectedIndex == 0 ? currentScreen = const PostScreen() : selectedIndex == 1 ? currentScreen = const MediaPicker() :selectedIndex == 2 ? currentScreen = const SearchScreen(): logout();
           });
         },
       ),
     );
+  }
+
+  logout() async{
+    await authInst.signOut();
+    loggedInUser = null;
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const SplashScreen()), (Route<dynamic> route) => false);
   }
 }
