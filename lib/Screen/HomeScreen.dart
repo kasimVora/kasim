@@ -1,10 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:firebase__test/Helper/Color.dart';
+import 'package:downloads_path_provider/downloads_path_provider.dart';
+import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Screen/ChatScreen.dart';
+import 'package:firebase__test/Screen/CreatePost.dart';
 import 'package:firebase__test/Screen/SearchScreen.dart';
 import 'package:firebase__test/Screen/SplashScreen.dart';
-import 'package:flutter/material.dart';import '../Helper/FirebaseHelperFunction.dart';
+import 'package:firebase__test/Screen/UserProfile.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:insta_assets_picker/insta_assets_picker.dart';
+import 'package:path_provider/path_provider.dart';import '../Helper/FirebaseHelperFunction.dart';
 import '../Model/UserModel.dart';
 import '../main.dart';
 import 'MediaPicker.dart';
@@ -21,8 +28,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-  Widget currentScreen = PostScreen();
-  String appBarText = "Home Screen";
+  Widget currentScreen = const PostScreen();
 
   @override
   void initState() {
@@ -58,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: "",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
+            icon: Icon(Icons.account_circle),
             label: "",
           ),
         ],
@@ -70,16 +76,41 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (value){
           setState(() {
             selectedIndex = value;
-            selectedIndex == 0 ? currentScreen = const PostScreen() : selectedIndex == 1 ? currentScreen = const MediaPicker() :selectedIndex == 2 ? currentScreen = const SearchScreen(): logout();
+            selectedIndex == 0 ? currentScreen = const PostScreen() : selectedIndex == 1 ?  openPicker()  :selectedIndex == 2 ? currentScreen = const SearchScreen(): currentScreen =  UserProfile(uid: loggedInUser!.uid);
           });
         },
       ),
     );
   }
+  openPicker() {
+    InstaAssetPicker.pickAssets(
+      context,
+      title: 'Select images',
+      maxAssets: 1,
+      pickerTheme: ThemeData.light(),
+      closeOnComplete: true,
+      isSquareDefaultCrop: true,
+      useRootNavigator: true,
+      onCompleted: (cropStream) {
+        cropStream.listen((event) async{
+          String newPath = '';
 
-  logout() async{
-    await authInst.signOut();
-    loggedInUser = null;
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const SplashScreen()), (Route<dynamic> route) => false);
+            Directory directory = await getApplicationDocumentsDirectory();
+            newPath = "${directory.path}/newPost.jpg";
+
+
+          final file = await event.selectedAssets.first.file;
+          await FlutterImageCompress.compressAndGetFile(
+              file!.path, newPath,
+              quality: 50,
+              numberOfRetries: 2).then((value) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>  CreatePost(image: value!.path)));
+          });
+
+        });
+      },
+    );
   }
 }
+
+

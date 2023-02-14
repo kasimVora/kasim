@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase__test/Helper/Color.dart';
+import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Model/UserModel.dart';
 import 'package:firebase__test/Screen/UserProfile.dart';
 import 'package:firebase__test/main.dart';
@@ -65,19 +65,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget userList(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
     List<UserModel> users = [];
-    print(snapshot.data!.docs.length);
     for(int i = 0 ;i<snapshot.data!.docs.length;i++){
       var  e = snapshot.data!.docs[i].data() as Map<String,dynamic>;
       print(e);
        users.add(UserModel.fromJson(e));
     }
-    // snapshot.data!.docs.map((e) {
-    //  // var user = e.data() as Map<String,dynamic>;
-    //   print("e.data()");
-    //   print(e.data());
-    //
-    //  // users.add(UserModel.fromJson(user));
-    // });
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -102,7 +94,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   errorWidget: (context, url, error) => const Icon(Icons.person),
                 ),
                 title: Text(users[index].userName),
-                  tileColor: greysecond,
+                  tileColor: grey,
                 onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context) =>  UserProfile(uid: users[index].uid)));
                 },

@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase__test/Helper/Color.dart';
+import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
-import 'package:firebase__test/Helper/Style.dart';
-import 'package:firebase__test/Helper/Utility.dart';
+import 'package:firebase__test/Utility/Style.dart';
+import 'package:firebase__test/Utility/Utility.dart';
 import 'package:firebase__test/Model/PostModel.dart';
 import 'package:firebase__test/Screen/HomeScreen.dart';
 import 'package:firebase__test/Screen/PostScreen.dart';
@@ -152,7 +152,7 @@ class _CreatePostState extends State<CreatePost> {
 
   createPost(id,url) {
     PostModel postModel = PostModel(
-        postId: id,
+        postId: "",
         userId: loggedInUser?.uid??"",
         userName: loggedInUser?.userName??"",
         postUrl: url,
@@ -163,14 +163,16 @@ class _CreatePostState extends State<CreatePost> {
         caption: captionCon.text.trim(),
         created: DateTime.now());
 
-    postRef.doc(loggedInUser!.uid).collection(loggedInUser!.uid).add(postModel.toJson()).
+    postRef.add(postModel.toJson()).
     then((value) {
-      List posts = loggedInUser!.posts;
-      posts.add(value.id);
-      userRef.doc(loggedInUser!.uid).update({"posts": posts}).whenComplete(()  {
-        Navigator.pop(context);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-      }).catchError((e) => print(e));
+     postRef.doc(value.id).update({"post_Id":value.id}).then((param){
+       List posts = loggedInUser!.posts;
+       posts.add(value.id);
+       userRef.doc(loggedInUser!.uid).update({"posts": posts}).whenComplete(()  {
+         Navigator.pop(context);
+         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const HomeScreen()), (Route<dynamic> route) => false);
+       }).catchError((e) => print(e));
+     });
     }).catchError((onError){
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(onError.toString())));

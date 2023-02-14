@@ -1,9 +1,9 @@
 
-import 'package:firebase__test/Helper/size_config.dart';
+import 'package:firebase__test/Utility/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'Style.dart';
+import '../Utility/Style.dart';
 
 
 class OTP extends StatefulWidget {
@@ -68,7 +68,7 @@ class _OTPState extends State<OTP> {
                   child: TextFormField(
                     controller: widget.con_1_,
                     focusNode: pin1FocusNode,
-                    maxLength: 1,
+                    maxLength: 1,style: blackNormalText14,
                     keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.center,
                     decoration: otpInputDecoration,
@@ -109,7 +109,7 @@ class _OTPState extends State<OTP> {
                   child: TextFormField(
                     controller: widget.con_2_,
                     focusNode: pin2FocusNode,
-                    maxLength: 1,
+                    maxLength: 1,style: blackNormalText14,
                     keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.center,
                     decoration: otpInputDecoration,
@@ -149,7 +149,7 @@ class _OTPState extends State<OTP> {
                   child: TextFormField(
                     controller: widget.con_3_,
                     keyboardType: TextInputType.emailAddress,
-                    maxLength: 1,
+                    maxLength: 1,style: blackNormalText14,
                     focusNode: pin3FocusNode,
                     textAlign: TextAlign.center,
                     onChanged: (value) {
@@ -190,6 +190,7 @@ class _OTPState extends State<OTP> {
                       keyboardType: TextInputType.emailAddress,
                       focusNode: pin4FocusNode,
                       textAlign: TextAlign.center,
+                      style: blackNormalText14,
                       decoration: otpInputDecoration,
                       onChanged: (value) {
                         if (value.length == 1) {
@@ -224,7 +225,7 @@ class _OTPState extends State<OTP> {
                     keyboardType: TextInputType.emailAddress,
                     controller: widget.con_5_,
                     maxLength: 1,
-                    focusNode: pin5FocusNode,
+                    focusNode: pin5FocusNode,style: blackNormalText14,
                     textAlign: TextAlign.center,
                     decoration: otpInputDecoration,
                     onChanged: (value) {
@@ -262,6 +263,7 @@ class _OTPState extends State<OTP> {
                   child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
                       controller: widget.con_6_,
+                      style: blackNormalText14,
                       focusNode: pin6FocusNode,
                       maxLength: 1,
                       onChanged: (value) {

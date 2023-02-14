@@ -1,5 +1,5 @@
 
-import 'package:firebase__test/Helper/size_config.dart';
+import 'package:firebase__test/Utility/size_config.dart';
 import 'package:flutter/material.dart';
 
 import 'Color.dart';
@@ -374,22 +374,22 @@ InputDecoration applTxtDecorationEnable(String hint){
 
 final otpInputDecoration = InputDecoration(
   fillColor: whiteColor,
-  filled: true,
   counterStyle: const TextStyle(height: double.minPositive,),
   counterText: "",
   contentPadding: const EdgeInsets.symmetric(
       vertical: 15.0, horizontal: 10.0),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide:  const BorderSide(color: primaryColor,width: 1.2),
+    borderSide:  const BorderSide(color: whiteColor,width: 1.2),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide:  const BorderSide(color: primaryColor,width: 1.2),
+    borderSide:  const BorderSide(color: whiteColor,width: 1.2),
   ),
   border: UnderlineInputBorder(
 
-      borderRadius: BorderRadius.circular(10.0)),
+      borderRadius: BorderRadius.circular(10.0)
+  ),
   isDense: true,
   // contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
 );

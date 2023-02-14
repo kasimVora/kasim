@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase__test/Helper/Color.dart';
+import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -37,10 +37,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       navigatorKey: navigatorKey,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-          bottomAppBarColor:blackColor,
-      ),
+      theme: ThemeData.dark(),
       home:  const SplashScreen(),
     );
   }

@@ -53,6 +53,12 @@ dependencies:
   video_player: ^2.5.1
   photofilters: ^3.0.1
   storage_path: ^0.2.0
+  insta_assets_picker: ^1.1.1
+  flutter_image_compress: ^1.1.3
+  isolated_worker: ^0.1.1
+  downloads_path_provider: ^0.1.0
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

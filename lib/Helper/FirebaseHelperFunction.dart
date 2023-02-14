@@ -14,7 +14,7 @@ import '../main.dart';
 
 UserModel? loggedInUser;
 
- const serverKey = "AAAAk2K7zo0:APA91bHmdm2evd6BVgI6FfisVJdmRBGCLCeKwHvtT7rxEMue5gBf0WTiFDDk3BCCpV97pf8mT3ySWR_qd-q28Qfe08hTkq9RKr8pbTPUEz7kV4mvIWsGSXrzEMmwUf5ZyYc164QGCHBq";
+ const serverKey = "AAAAjxXxUcc:APA91bF3kPXfeFZ4pqQt4YsZOAhJ91NpVXb8Z1rpVeuBfVH4r1kl9eG2nDENXhogF49cvknRVblp9vWo_Tg15prAv0E4pCqbbyJCRDV7NS43Xjk-aNFGojJj8ioDic52ZpnTypOZ1haV";
  const firebaseUrl = 'https://fcm.googleapis.com/fcm/send';
 
 Future<UserModel>  getUserFromUid(String id) async{

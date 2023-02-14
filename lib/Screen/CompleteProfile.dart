@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import '../Helper/FirebaseHelperFunction.dart';
 import '../Model/UserModel.dart';
-import '../Helper/Utility.dart';
+import '../Utility/Utility.dart';
 import '../main.dart';
 import 'LoginScreen.dart';
 

@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
-import '../Helper/OTP.dart';
+import '../CommonWidget/OTP.dart';
 import '../main.dart';
 import 'HomeScreen.dart';
 import 'CompleteProfile.dart';
@@ -53,7 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                 fillColor: Colors.white,
                 labelText: "Mobile Number",
-                filled: true,
+
+                filled: false,
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 12, horizontal: 10.0),
                 border: UnderlineInputBorder(

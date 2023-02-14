@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../Model/DropDownModel.dart';
-import 'Style.dart';
+import '../Utility/Style.dart';
 
 class DropDownWidget extends StatelessWidget {
   String? selValue;
