@@ -29,18 +29,14 @@ Future<UserModel>  getUserFromUid(String id) async{
   return user!;
 }
 
-Future<void> sendPushNotification(String token,Map<String,dynamic> notification,String chatRoom) async{
+Future<void> sendPushNotification(String token,Map<String,dynamic> notification,Map<String,dynamic> payload) async{
   try {
     var url = Uri.parse(firebaseUrl);
 
     var response = await http.post(url,
         body: jsonEncode({
           "to" : token,
-          "data": {
-            "type": "MESSAGE",
-            "chatRoom": chatRoom,
-            "target": "loggedInUser"
-          },
+          "data": payload,
           "notification" : notification
 
         }),

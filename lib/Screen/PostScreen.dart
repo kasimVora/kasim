@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase__test/Model/UserModel.dart';
 import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
 import 'package:firebase__test/Utility/Style.dart';
@@ -55,7 +56,7 @@ class _PostScreenState extends State<PostScreen> {
         child: Column(
           children: [
             GestureDetector(
-              onDoubleTap: () => likeFunction(posts.postId),
+              onDoubleTap: () => likeFunction(posts),
               child: CachedNetworkImage(
                 imageUrl: posts.postUrl,
                 placeholder: (context, url) =>  Container(
@@ -101,7 +102,7 @@ class _PostScreenState extends State<PostScreen> {
                       ),
                       Row(
                         children: [
-                          IconButton(onPressed: () => likeFunction(posts.postId), icon:  Icon(posts.likeCount.contains(loggedInUser!.uid) ? Icons.favorite : Icons.favorite_border,color: posts.likeCount.contains(loggedInUser!.uid) ? redColor : whiteColor,)),
+                          IconButton(onPressed: () => likeFunction(posts), icon:  Icon(posts.likeCount.contains(loggedInUser!.uid) ? Icons.favorite : Icons.favorite_border,color: posts.likeCount.contains(loggedInUser!.uid) ? redColor : whiteColor,)),
                           IconButton(onPressed: (){}, icon: const Icon(Icons.chat_bubble_outline,color: whiteColor,)),
                         ],
                       ),
@@ -176,15 +177,26 @@ class _PostScreenState extends State<PostScreen> {
             }));
   }
 
-  likeFunction(postId) {
-    postRef.doc(postId).get().then((value) {
+  likeFunction(PostModel postModel) {
+    postRef.doc(postModel.postId).get().then((value) {
       List likes = value.data()!["likeCount"];
       if(likes.contains(loggedInUser!.uid)){
         likes.remove(loggedInUser!.uid);
+        postRef.doc(postModel.postId).update({"likeCount":likes}).whenComplete(() async{
+          UserModel model = await getUserFromUid(postModel.userId);
+          await sendPushNotification(model.deviceToken,{
+            "body" : "",
+            "title": "${loggedInUser!.userName} like your post"
+          },{
+            "type": "LIKE",
+            "uid": loggedInUser!.uid,
+          });
+        });
       }else{
         likes.add(loggedInUser!.uid);
+        postRef.doc(postModel.postId).update({"likeCount":likes});
       }
-      postRef.doc(postId).update({"likeCount":likes});
+
     });
   }
 

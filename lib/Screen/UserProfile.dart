@@ -125,7 +125,7 @@ class _UserProfileState extends State<UserProfile> {
           ),
           const SizedBox(height: 10,),
           GestureDetector(
-            onTap: (){
+            onTap: () async {
               if(loggedInUser!.following.contains(widget.uid)){
                 //unfollow
 
@@ -150,6 +150,14 @@ class _UserProfileState extends State<UserProfile> {
                 followings.add(user.uid);
                 userRef.doc(loggedInUser!.uid).update({"following": followings});
 
+                await sendPushNotification(user.deviceToken,{
+                  "body" : "",
+                  "title": "${loggedInUser!.userName} started following you"
+                },{
+                  "type": "FOLLOW",
+                  "uid": loggedInUser!.uid,
+                });
+
               }
             },
             child: Container(
@@ -157,7 +165,8 @@ class _UserProfileState extends State<UserProfile> {
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(7)),
-                  border: Border.all(color: whiteColor,width: 1.2)
+                  border: Border.all(color: whiteColor,width: 1.2),
+                color: loggedInUser!.following.contains(widget.uid) ? blackColor : mainBlue
               ),
               child: Text(loggedInUser!.uid == widget.uid ? "Edit profile" :loggedInUser!.following.contains(widget.uid) ? "Unfollow" : "Follow",textAlign: TextAlign.center,style: whiteBoldText14,),
             ),

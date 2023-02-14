@@ -7,28 +7,38 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
+import 'Helper/NotificationService.dart';
 import 'Screen/CameraScreen.dart';
 import 'Screen/HomeScreen.dart';
 import 'Screen/SplashScreen.dart';
 import 'firebase_options.dart';
 
-
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final FirebaseAuth authInst = FirebaseAuth.instance;
 FirebaseStorage storageRef = FirebaseStorage.instance;
 final userRef = FirebaseFirestore.instance.collection('user');
 final chatRef = FirebaseFirestore.instance.collection('chatRoom');
 final postRef = FirebaseFirestore.instance.collection('Post');
-
+NotificationService notificationService = NotificationService();
 FirebaseMessaging messaging = FirebaseMessaging.instance;
 late List<CameraDescription> cameras;
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+
   cameras = await availableCameras();
+
+  await notificationService.init();
+  await notificationService.requestIOSPermissions();
+  await FirebaseMessaging.instance.setAutoInitEnabled(true);
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true,);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   runApp(const MyApp());
 }
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -43,7 +53,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  print('Handling a background message ${message.messageId}');
+}
 
 /// > Task :sqflite:signingReport
 /// Variant: debugAndroidTest

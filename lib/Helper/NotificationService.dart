@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase__test/Screen/UserProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -123,5 +124,9 @@ class NotificationService {
 
 Future<void> onSelectNotification(String? payload) async {
   Map<String,dynamic> object = jsonDecode(payload!);
+
+  if(object["type"] == "FOLLOW"){
+    await navigatorKey.currentState?.push(MaterialPageRoute(builder: (_) => UserProfile(uid: object["uid"])));
+  }
 
 }
