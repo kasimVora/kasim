@@ -122,11 +122,12 @@ class _PostItemState extends State<PostItem> {
                           ),
                         ),
                         const SizedBox(height: 3,),
+                        if(widget.posts.commentsCount.isNotEmpty)
                         GestureDetector(
                             onTap: (){
                               Navigator.push(context, MaterialPageRoute(builder: (context) =>  CommentScreen(postModel: widget.posts,)));
                             },
-                            child: Text("View all${ widget.posts.commentsCount.length} Comments",style: grayNormalText12,)),
+                            child: Text("View all ${ widget.posts.commentsCount.length} Comments",style: grayNormalText12,)),
                         const SizedBox(height: 3,),
                         Text(getTimeDifferenceFromNow(widget.posts.created!),style: grayNormalText12,),
                       ],
