@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Model/UserModel.dart';
-import 'package:firebase__test/Screen/UserProfile.dart';
+import 'package:firebase__test/Screen/Profile/UserProfile.dart';
 import 'package:firebase__test/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

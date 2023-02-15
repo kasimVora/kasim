@@ -5,12 +5,13 @@ import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
 import 'package:firebase__test/Utility/Style.dart';
 import 'package:firebase__test/Model/PostModel.dart';
 import 'package:firebase__test/Model/UserModel.dart';
-import 'package:firebase__test/Screen/EditProfile.dart';
+import 'package:firebase__test/Screen/Profile/EditProfile.dart';
 import 'package:flutter/material.dart';
 
-import '../main.dart';
-import 'PostScreen/SinglePostScreen.dart';
-import 'SplashScreen.dart';
+import '../../main.dart';
+import 'FollowerFollowingList.dart';
+import 'SinglePostScreen.dart';
+import '../SplashScreen.dart';
 
 class UserProfile extends StatefulWidget {
   String uid;
@@ -109,18 +110,28 @@ class _UserProfileState extends State<UserProfile> {
                 ],
               ),
               const SizedBox(width: 20,),
-              Column(
-                children: [
-                  Text(user.followers.length.toString(),style: whiteBoldText14),
-                  Text("followers",style: whiteNormalText13),
-                ],
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  FollowerFollowingList(path: "followers",uid: user.uid,)));
+                },
+                child: Column(
+                  children: [
+                    Text(user.followers.length.toString(),style: whiteBoldText14),
+                    Text("followers",style: whiteNormalText13),
+                  ],
+                ),
               ),
               const SizedBox(width: 10,),
-              Column(
-                children: [
-                  Text(user.following.length.toString(),style: whiteBoldText14),
-                  Text("following",style: whiteNormalText13),
-                ],
+              GestureDetector(
+                onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  FollowerFollowingList(path: "following",uid: user.uid,)));
+                },
+                child: Column(
+                  children: [
+                    Text(user.following.length.toString(),style: whiteBoldText14),
+                    Text("following",style: whiteNormalText13),
+                  ],
+                ),
               ),
             ],
           ),

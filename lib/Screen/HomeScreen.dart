@@ -7,7 +7,7 @@ import 'package:firebase__test/Screen/ChatScreen.dart';
 import 'package:firebase__test/Screen/CreatePost.dart';
 import 'package:firebase__test/Screen/SearchScreen.dart';
 import 'package:firebase__test/Screen/SplashScreen.dart';
-import 'package:firebase__test/Screen/UserProfile.dart';
+import 'package:firebase__test/Screen/Profile/UserProfile.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
