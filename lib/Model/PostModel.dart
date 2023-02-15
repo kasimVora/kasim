@@ -10,17 +10,17 @@ class PostModel {
   String caption = '';
   String location = '';
 
-  PostModel({
-       required this.postId,
-       required this.userId,
-       required this.userName,
-       required this.postUrl,
-       required this.postType,
-       required this.likeCount,
-       required this.commentsCount,
-       required this.location,
-       required this.caption,
-       required this.created});
+  PostModel(
+      {required this.postId,
+      required this.userId,
+      required this.userName,
+      required this.postUrl,
+      required this.postType,
+      required this.likeCount,
+      required this.commentsCount,
+      required this.location,
+      required this.caption,
+      required this.created});
 
   PostModel.fromJson(Map<String, dynamic> json) {
     postId = json['post_Id'];
@@ -28,16 +28,16 @@ class PostModel {
     caption = json['caption'];
     userName = json['user_name'];
     location = json['location'];
-    if(json['commentsCount']!= null && json['commentsCount'].isNotEmpty){
-      for(var i in json['commentsCount']) {
+    if (json['commentsCount'] != null && json['commentsCount'].isNotEmpty) {
+      for (var i in json['commentsCount']) {
         commentsCount.add(i);
       }
     }
     postUrl = json['post_url'];
     postType = json['post_type'];
     created = DateTime.fromMicrosecondsSinceEpoch(json['created']);
-    if(json['likeCount']!= null && json['likeCount'].isNotEmpty){
-      for(var i in json['likeCount']) {
+    if (json['likeCount'] != null && json['likeCount'].isNotEmpty) {
+      for (var i in json['likeCount']) {
         likeCount.add(i);
       }
     }
@@ -55,6 +55,44 @@ class PostModel {
     data['post_type'] = postType;
     data['created'] = created!.microsecondsSinceEpoch;
     data['likeCount'] = likeCount;
+    return data;
+  }
+}
+
+class CommentModel {
+  String userName = '';
+  String imgUrl = '';
+  String userId = '';
+  String comment = '';
+  String commentId = '';
+  DateTime? posted;
+
+  CommentModel({
+      required this.userName,
+      required this.userId,
+      required this.comment,
+      required this.imgUrl,
+      required this.commentId,
+      required this.posted
+  });
+
+  CommentModel.fromJson(Map<String, dynamic> json) {
+    userName = json['user_name'];
+    userId = json['user_id'];
+    comment = json['comment'];
+    commentId = json['comment_Id'];
+    imgUrl = json['imgUrl'];
+    posted =  DateTime.fromMicrosecondsSinceEpoch(json['posted']);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user_name'] = userName;
+    data['user_id'] = userId;
+    data['comment'] = comment;
+    data['comment_Id'] = commentId;
+    data['imgUrl'] = imgUrl;
+    data['posted'] = posted!.microsecondsSinceEpoch;
     return data;
   }
 }

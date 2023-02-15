@@ -19,7 +19,7 @@ import '../main.dart';
 import 'MediaPicker.dart';
 
 
-import 'PostScreen.dart';
+import 'PostScreen/PostScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -118,20 +118,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
       ///PUSH NOTIFICATION SETUP
-      messaging.getInitialMessage().then((value) {
-        if(value!=null){
-          onSelectNotification(jsonEncode(value.data));
-        }
-      });
-
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        onSelectNotification(jsonEncode(message.data));
-      });
-
-      FirebaseMessaging.onMessage.listen((RemoteMessage message){
-        final notification = message.notification;
-        notificationService.showNotification(message.hashCode,notification!.title!,notification.body!,jsonEncode(message.data));
-      });
+      // messaging.getInitialMessage().then((value) {
+      //   if(value!=null){
+      //     onSelectNotification(jsonEncode(value.data));
+      //   }
+      // });
+      //
+      // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      //   onSelectNotification(jsonEncode(message.data));
+      // });
+      //
+      // FirebaseMessaging.onMessage.listen((RemoteMessage message){
+      //   final notification = message.notification;
+      //   notificationService.showNotification(message.hashCode,notification!.title!,notification.body!,jsonEncode(message.data));
+      // });
     }
   }
 }

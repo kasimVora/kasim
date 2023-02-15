@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase__test/Utility/Color.dart';
@@ -28,6 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void dispose() {
     super.dispose();
     focusNode.dispose();
+    controller.dispose();
   }
 
   @override
@@ -49,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           StreamBuilder(
-            stream: userRef.where('user_name', isEqualTo: controller.text).snapshots(),
+            stream: userRef.where('user_name', isEqualTo: controller.text.trim()).snapshots(),
             builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
              if(snapshot.hasData){
                return userList(snapshot);
@@ -69,6 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
       var  e = snapshot.data!.docs[i].data() as Map<String,dynamic>;
       print(e);
        users.add(UserModel.fromJson(e));
+      print(jsonEncode(users));
     }
     return Expanded(
       child: Padding(

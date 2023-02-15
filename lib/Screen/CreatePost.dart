@@ -6,7 +6,7 @@ import 'package:firebase__test/Utility/Style.dart';
 import 'package:firebase__test/Utility/Utility.dart';
 import 'package:firebase__test/Model/PostModel.dart';
 import 'package:firebase__test/Screen/HomeScreen.dart';
-import 'package:firebase__test/Screen/PostScreen.dart';
+import 'package:firebase__test/Screen/PostScreen/PostScreen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart';
 import 'package:image/image.dart' as imageLib;

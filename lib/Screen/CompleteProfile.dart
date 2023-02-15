@@ -63,8 +63,8 @@ class _CompleteProfileState extends State<CompleteProfile> {
                               color: Colors.white
                           ),
                           child: IconButton(onPressed: () async {
-                            final ImagePicker _picker = ImagePicker();
-                            final XFile? file = await _picker.pickImage(source: ImageSource.gallery,imageQuality: 55);
+                            final ImagePicker picker = ImagePicker();
+                            final XFile? file = await picker.pickImage(source: ImageSource.gallery,imageQuality: 55);
                             image = File(file!.path);
                             setState(() {});
                           }, icon: const Icon(Icons.camera_alt,size: 35,color: Colors.blue,)

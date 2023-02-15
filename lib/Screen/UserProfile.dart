@@ -9,6 +9,7 @@ import 'package:firebase__test/Screen/EditProfile.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
+import 'PostScreen/SinglePostScreen.dart';
 import 'SplashScreen.dart';
 
 class UserProfile extends StatefulWidget {
@@ -166,7 +167,7 @@ class _UserProfileState extends State<UserProfile> {
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(7)),
                   border: Border.all(color: whiteColor,width: 1.2),
-                color: loggedInUser!.following.contains(widget.uid) ? blackColor : mainBlue
+                color: !loggedInUser!.following.contains(widget.uid) ? blackColor : mainBlue
               ),
               child: Text(loggedInUser!.uid == widget.uid ? "Edit profile" :loggedInUser!.following.contains(widget.uid) ? "Unfollow" : "Follow",textAlign: TextAlign.center,style: whiteBoldText14,),
             ),
@@ -186,7 +187,6 @@ class _UserProfileState extends State<UserProfile> {
         posts.add(PostModel.fromJson(e));
      }
     }
-    print(posts.length);
 
     return Expanded(
       child: Padding(
@@ -199,22 +199,27 @@ class _UserProfileState extends State<UserProfile> {
                 mainAxisSpacing: 4),
             itemBuilder: (_, i) {
 
-              return  CachedNetworkImage(
-                height: 200,width: 200,
-                imageUrl: posts[i].postUrl,
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
+              return  GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  SinglePostScreen(post: posts[i].postId,)));
+                },
+                child: CachedNetworkImage(
+                  height: 200,width: 200,
+                  imageUrl: posts[i].postUrl,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
+                  placeholder: (context, url) =>  Container(
+                    height: 150,width: 150,color: greysecond,
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.person),
                 ),
-                placeholder: (context, url) =>  Container(
-                  height: 150,width: 150,color: greysecond,
-                ),
-                errorWidget: (context, url, error) => const Icon(Icons.person),
               );
             },
             itemCount: posts.length),

@@ -104,7 +104,7 @@ TextStyle whiteNormalText13 = const TextStyle(fontSize: 13, color: whiteColor);
 TextStyle whiteNormalText11 = const TextStyle(fontSize: 11, color: whiteColor);
 TextStyle whiteNormalText14 = const TextStyle(fontSize: 14, color: whiteColor);
 
-TextStyle whiteNormalText16 = const TextStyle(fontSize: 16, color: whiteColor);
+TextStyle whiteNormalText16 = const TextStyle(fontSize: 16, color: whiteColor,fontWeight: FontWeight.normal);
 
 TextStyle whiteNormalText18 = const TextStyle(fontSize: 18, color: whiteColor);
 
