@@ -74,7 +74,7 @@ class _FollowerFollowingListState extends State<FollowerFollowingList> {
 
   Widget userList(AsyncSnapshot<List<UserModel>> snapshot) {
     List<UserModel> users = snapshot.data!;
-    return ListView.builder(
+    return ListView.separated(
         shrinkWrap: true,
         primary: false,
         physics: const BouncingScrollPhysics(),
@@ -105,10 +105,9 @@ class _FollowerFollowingListState extends State<FollowerFollowingList> {
               onTap: () async {
                 if(loggedInUser!.following.contains(users[index].uid)){
                   //unfollow
-
                   List<String> followers = users[index].followers;
                   followers.remove(loggedInUser!.uid);
-                  userRef.doc(widget.uid).update({"followers": followers});
+                  userRef.doc(users[index].uid).update({"followers": followers});
 
                   List<String> followings = loggedInUser!.following;
                   followings.remove(users[index].uid);
@@ -116,9 +115,10 @@ class _FollowerFollowingListState extends State<FollowerFollowingList> {
 
                 }else{
                   //follow
+
                   List<String> followers = users[index].followers;
                   followers.add(loggedInUser!.uid);
-                  userRef.doc(widget.uid).update({"followers": followers});
+                  userRef.doc(users[index].uid).update({"followers": followers});
 
                   List<String> followings = loggedInUser!.following;
                   followings.add(users[index].uid);
@@ -148,7 +148,11 @@ class _FollowerFollowingListState extends State<FollowerFollowingList> {
               ),
             ) : const SizedBox(),
           );
-        });
+        }, separatorBuilder: (BuildContext context, int index) {
+          return const Divider(
+            color: grayColor,
+          );
+    },);
   }
 
 

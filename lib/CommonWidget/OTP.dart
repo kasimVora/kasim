@@ -69,7 +69,7 @@ class _OTPState extends State<OTP> {
                     controller: widget.con_1_,
                     focusNode: pin1FocusNode,
                     maxLength: 1,style: blackNormalText14,
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     decoration: otpInputDecoration,
                     onChanged: (value) {
@@ -110,7 +110,7 @@ class _OTPState extends State<OTP> {
                     controller: widget.con_2_,
                     focusNode: pin2FocusNode,
                     maxLength: 1,style: blackNormalText14,
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     decoration: otpInputDecoration,
                     onChanged: (value) {
@@ -148,7 +148,7 @@ class _OTPState extends State<OTP> {
                   width: getProportionateScreenWidth(30),
                   child: TextFormField(
                     controller: widget.con_3_,
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.number,
                     maxLength: 1,style: blackNormalText14,
                     focusNode: pin3FocusNode,
                     textAlign: TextAlign.center,
@@ -187,7 +187,7 @@ class _OTPState extends State<OTP> {
                   child: TextFormField(
                       controller: widget.con_4_,
                       maxLength: 1,
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.number,
                       focusNode: pin4FocusNode,
                       textAlign: TextAlign.center,
                       style: blackNormalText14,
@@ -222,7 +222,7 @@ class _OTPState extends State<OTP> {
                 child: SizedBox(
                   width: getProportionateScreenWidth(30),
                   child: TextFormField(
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.number,
                     controller: widget.con_5_,
                     maxLength: 1,
                     focusNode: pin5FocusNode,style: blackNormalText14,
@@ -261,7 +261,7 @@ class _OTPState extends State<OTP> {
                 child: SizedBox(
                   width: getProportionateScreenWidth(30),
                   child: TextFormField(
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.number,
                       controller: widget.con_6_,
                       style: blackNormalText14,
                       focusNode: pin6FocusNode,
