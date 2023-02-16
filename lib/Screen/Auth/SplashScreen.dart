@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../Helper/FirebaseHelperFunction.dart';
-import '../main.dart';
-import 'MediaPicker.dart';
-import 'HomeScreen.dart';
+import '../../Helper/FirebaseHelperFunction.dart';
+import '../../main.dart';
+import '../MediaPicker.dart';
+import '../HomeScreen.dart';
 import 'LoginScreen.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

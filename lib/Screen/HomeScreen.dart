@@ -5,7 +5,7 @@ import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Screen/ChatScreen.dart';
 import 'package:firebase__test/Screen/CreatePost.dart';
 import 'package:firebase__test/Screen/SearchScreen.dart';
-import 'package:firebase__test/Screen/SplashScreen.dart';
+import 'package:firebase__test/Screen/Auth/SplashScreen.dart';
 import 'package:firebase__test/Screen/Profile/UserProfile.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';

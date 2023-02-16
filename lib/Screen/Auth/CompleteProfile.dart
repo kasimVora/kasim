@@ -8,10 +8,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-import '../Helper/FirebaseHelperFunction.dart';
-import '../Model/UserModel.dart';
-import '../Utility/Utility.dart';
-import '../main.dart';
+import '../../Helper/FirebaseHelperFunction.dart';
+import '../../Model/UserModel.dart';
+import '../../Utility/Utility.dart';
+import '../../main.dart';
 import 'LoginScreen.dart';
 
 class CompleteProfile extends StatefulWidget {

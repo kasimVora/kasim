@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'Helper/NotificationService.dart';
 import 'Screen/CameraScreen.dart';
 import 'Screen/HomeScreen.dart';
-import 'Screen/SplashScreen.dart';
+import 'Screen/Auth/SplashScreen.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

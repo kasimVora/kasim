@@ -6,9 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
-import '../CommonWidget/OTP.dart';
-import '../main.dart';
-import 'HomeScreen.dart';
+import '../../CommonWidget/OTP.dart';
+import '../../main.dart';
+import '../HomeScreen.dart';
 import 'CompleteProfile.dart';
 
 class LoginScreen extends StatefulWidget {

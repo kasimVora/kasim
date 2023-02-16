@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import '../../main.dart';
 import 'FollowerFollowingList.dart';
 import 'SinglePostScreen.dart';
-import '../SplashScreen.dart';
+import '../Auth/SplashScreen.dart';
 
 class UserProfile extends StatefulWidget {
   String uid;
@@ -23,6 +23,8 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   late UserModel user;
+  bool onTap = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -237,6 +239,7 @@ class _UserProfileState extends State<UserProfile> {
       ),
     );
   }
+
 }
 
 
