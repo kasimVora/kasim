@@ -78,7 +78,7 @@ class _PostItemState extends State<PostItem> {
                         Row(
                           children: [
                             IconButton(onPressed: () => likeFunction(widget.posts), icon:  Icon(widget.posts.likeCount.contains(loggedInUser!.uid) ? Icons.favorite : Icons.favorite_border,color: widget.posts.likeCount.contains(loggedInUser!.uid) ? redColor : whiteColor,)),
-                            IconButton(onPressed: (){}, icon: const Icon(Icons.chat_bubble_outline,color: whiteColor,)),
+                            IconButton(onPressed: () => savePost(widget.posts), icon:  Icon(loggedInUser!.savedPosts.contains(widget.posts.postId) ? Icons.bookmark :Icons.bookmark_border,color: whiteColor,)),
                           ],
                         ),
                         Text.rich(
@@ -162,5 +162,22 @@ class _PostItemState extends State<PostItem> {
       }
 
     });
+  }
+
+  savePost(PostModel posts) {
+    userRef.doc(loggedInUser!.uid).get().then((value) {
+      UserModel user = UserModel.fromJson(value.data()!);
+      List saved = user.savedPosts;
+      if(saved.contains(posts.postId)){
+        saved.remove(posts.postId);
+      }else{
+        saved.add(posts.postId);
+      }
+      userRef.doc(loggedInUser!.uid).update({"savedPosts":saved}).whenComplete(() {
+
+      });
+
+    });
+    setState(() {});
   }
 }

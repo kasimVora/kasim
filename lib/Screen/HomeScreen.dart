@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Screen/ChatScreen.dart';
 import 'package:firebase__test/Screen/CreatePost.dart';
@@ -12,7 +11,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:insta_assets_picker/insta_assets_picker.dart';
-import 'package:path_provider/path_provider.dart';import '../Helper/FirebaseHelperFunction.dart';
+import 'package:path_provider/path_provider.dart';
+import '../Helper/FirebaseHelperFunction.dart';
 import '../Helper/NotificationService.dart';
 import '../Model/UserModel.dart';
 import '../main.dart';
@@ -108,13 +108,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void initServices() {
     if(authInst.currentUser!=null){
-      final docRef = userRef.doc(authInst.currentUser!.uid);
-      docRef.snapshots().listen((event) {
+      userRef.doc(authInst.currentUser!.uid).snapshots().listen((event) {
         loggedInUser = UserModel.fromJson(event.data()!);
         print(jsonEncode(loggedInUser));
       },
-        onError: (error) => print("Listen failed: $error"),
-      );
+      ).onError((error){
+        print("Listen failed: $error");
+      });
 
 
       ///PUSH NOTIFICATION SETUP

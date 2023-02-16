@@ -7,6 +7,7 @@ class UserModel {
   List<String> followers = [];
   List<String> following = [];
   List<String> posts = [];
+  List<String> savedPosts = [];
 
   UserModel({
       required  this.phoneNumber,
@@ -16,6 +17,7 @@ class UserModel {
       required  this.followers,
       required  this.following,
       required  this.deviceToken,
+      required  this.savedPosts,
       required  this.posts
   });
 
@@ -40,6 +42,12 @@ class UserModel {
         following.add(i);
       }
     }
+
+    if(json['savedPosts']!=null && json['savedPosts'].isNotEmpty){
+      for(var i in json['savedPosts']){
+        savedPosts.add(i);
+      }
+    }
     deviceToken = json['device_token'];
   }
 
@@ -53,6 +61,7 @@ class UserModel {
     data['img_url'] = imgUrl;
     data['posts'] = posts;
     data['device_token'] = deviceToken;
+    data['savedPosts'] = savedPosts;
     return data;
   }
 }
