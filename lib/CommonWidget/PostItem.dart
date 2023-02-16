@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../Helper/FirebaseHelperFunction.dart';
@@ -78,7 +79,7 @@ class _PostItemState extends State<PostItem> {
                         Row(
                           children: [
                             IconButton(onPressed: () => likeFunction(widget.posts), icon:  Icon(widget.posts.likeCount.contains(loggedInUser!.uid) ? Icons.favorite : Icons.favorite_border,color: widget.posts.likeCount.contains(loggedInUser!.uid) ? redColor : whiteColor,)),
-                            IconButton(onPressed: () => savePost(widget.posts), icon:  Icon(loggedInUser!.savedPosts.contains(widget.posts.postId) ? Icons.bookmark :Icons.bookmark_border,color: whiteColor,)),
+                            saveFeed()
                           ],
                         ),
                         Text.rich(
@@ -178,6 +179,35 @@ class _PostItemState extends State<PostItem> {
       });
 
     });
-    setState(() {});
+  }
+  Widget saveFeed() {
+    return  StreamBuilder(
+      stream: userRef.doc(loggedInUser!.uid).snapshots(),
+      builder: (_, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasData) {
+          var object = snapshot.data!.data() as Map<String,dynamic>;
+
+          List saved = UserModel.fromJson(object).savedPosts;
+
+
+          return IconButton(onPressed: (){
+            if(saved.contains(widget.posts.postId)){
+              saved.remove(widget.posts.postId);
+            }else{
+              saved.add(widget.posts.postId);
+            }
+            userRef.doc(loggedInUser!.uid).update({"savedPosts":saved});
+          }, icon: Icon(
+              saved.contains(widget.posts.postId) ? Icons.bookmark :
+          Icons.bookmark_outline ));
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 }
+
+
+
+

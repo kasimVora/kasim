@@ -201,14 +201,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.8"
-  downloads_path_provider:
-    dependency: "direct main"
-    description:
-      name: downloads_path_provider
-      sha256: b5dcf0e2874c23026b4a2e6c21af63222dd8b7a29ed537b464362242ecb0b5d1
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.0"
   extended_image:
     dependency: transitive
     description:
