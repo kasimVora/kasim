@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase__test/Utility/Color.dart';
-import 'package:firebase__test/Screen/ChatScreen.dart';
+import 'package:firebase__test/Screen/Chat/ChatScreen.dart';
 import 'package:firebase__test/Screen/CreatePost.dart';
 import 'package:firebase__test/Screen/SearchScreen.dart';
 import 'package:firebase__test/Screen/Auth/SplashScreen.dart';

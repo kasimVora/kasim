@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase__test/Model/UserModel.dart';
+import 'package:firebase__test/Screen/Chat/ChatUsers.dart';
 import 'package:firebase__test/Screen/PostScreen/CommentScreen.dart';
 import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
@@ -30,7 +31,14 @@ class _PostScreenState extends State<PostScreen> {
       backgroundColor: blackColor,
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            const SizedBox(
+              height: 20,
+            ),
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatUsers()));
+            }, icon: Icon(Icons.chat)),
             const SizedBox(
               height: 20,
             ),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase__test/Screen/Chat/ChatScreen.dart';
 import 'package:firebase__test/Utility/Color.dart';
 import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
 import 'package:firebase__test/Utility/Style.dart';
@@ -34,7 +35,11 @@ class _UserProfileState extends State<UserProfile> {
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              IconButton(onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  ChatScreen(targetUser: user,)));
+              }, icon: Icon(Icons.message)),
               StreamBuilder(
                 stream: userRef.doc(widget.uid).snapshots(),
                 builder: (_, AsyncSnapshot<DocumentSnapshot> snapshot) {
