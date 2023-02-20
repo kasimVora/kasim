@@ -101,6 +101,12 @@ class _ChatScreenState extends State<ChatScreen> {
         imgUrl: widget.targetUser.imgUrl,
         type: "1");
     chatRef.doc(chatId).collection(chatId).add(model.toJson());
+    chatRef.doc(chatId).set({
+      "users":FieldValue.arrayUnion([widget.targetUser.uid,loggedInUser!.uid]),
+      "imgUrl":widget.targetUser.imgUrl,
+      "lastMsg":messageCon.text.trim(),
+      "created":DateTime.now()
+    });
     messageFoc.unfocus();
     messageCon.text = '';
   }
@@ -109,17 +115,19 @@ class _ChatScreenState extends State<ChatScreen> {
     chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).collection(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).get().then((value) {
       if(value.docs.isNotEmpty){
         chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
+        getData();
       }else{
-        chatId = widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5);
+        chatRef.doc(widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5)).collection(widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5)).get().then((value) {
+          if(value.docs.isNotEmpty){
+            chatId = widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5);
+            getData();
+          }else{
+            chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).set({});
+            chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
+            getData();
+          }
+        });
       }
-
-      chatRef.doc(chatId).collection(chatId).orderBy('created', descending: true).snapshots().listen((event) {
-        List<ChatModel> chats = [];
-        for(var i in event.docs){
-          chats.add(ChatModel.fromJson(i.data()));
-        }
-        streamController.sink.add(chats);
-      }).onError((error) => print(error.toString()));
     });
   }
 
@@ -155,6 +163,18 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     super.dispose();
     streamController.close();
+  }
+
+
+  getData(){
+
+    chatRef.doc(chatId).collection(chatId).orderBy('created', descending: true).snapshots().listen((event) {
+      List<ChatModel> chats = [];
+      for(var i in event.docs){
+        chats.add(ChatModel.fromJson(i.data()));
+      }
+      streamController.sink.add(chats);
+    }).onError((error) => print(error.toString()));
   }
 
 }
