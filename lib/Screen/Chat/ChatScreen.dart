@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
+import 'package:firebase__test/Model/ChatModel.dart';
 import 'package:firebase__test/Model/UserModel.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../Utility/Color.dart';
 import '../../Utility/Style.dart';
@@ -19,13 +24,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final messageCon = TextEditingController();
   final messageFoc = FocusNode();
+  String chatId  = '';
+  StreamController<List<ChatModel>> streamController = StreamController();
 
   @override
   void initState() {
     super.initState();
-    // Future.delayed(const Duration(milliseconds: 500), () async{
-    //   await getUserFromUid(widget.targetUid);
-    // });
+  //  chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
+    
+       genrateChatId();
   }
 
   @override
@@ -35,6 +42,18 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          StreamBuilder(
+            stream: streamController.stream,
+            builder: (_, AsyncSnapshot<List<ChatModel>> snapshot) {
+              if (snapshot.hasData) {
+                return postList(snapshot);
+              } else {
+                return const SizedBox();
+              }
+            },
+          ),
+          const SizedBox(height: 10,),
+
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(
@@ -73,6 +92,69 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage() async{
-    chatRef.doc();
+    ChatModel model = ChatModel(
+        userName: loggedInUser!.userName,
+        message: messageCon.text.trim(),
+        created: DateTime.now(),
+        from: loggedInUser!.uid,
+        to: widget.targetUser.uid,
+        imgUrl: widget.targetUser.imgUrl,
+        type: "1");
+    chatRef.doc(chatId).collection(chatId).add(model.toJson());
+    messageFoc.unfocus();
+    messageCon.text = '';
   }
+
+  genrateChatId() {
+    chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).collection(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).get().then((value) {
+      if(value.docs.isNotEmpty){
+        chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
+      }else{
+        chatId = widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5);
+      }
+
+      chatRef.doc(chatId).collection(chatId).orderBy('created', descending: true).snapshots().listen((event) {
+        List<ChatModel> chats = [];
+        for(var i in event.docs){
+          chats.add(ChatModel.fromJson(i.data()));
+        }
+        streamController.sink.add(chats);
+      }).onError((error) => print(error.toString()));
+    });
+  }
+
+  Widget postList(AsyncSnapshot<List<ChatModel>> snapshot) {
+    List<ChatModel> chat = snapshot.data!;
+    return Expanded(
+      child: ListView.builder(
+        shrinkWrap: true,
+        primary: false,
+        physics: const BouncingScrollPhysics(),
+        itemCount: chat.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Align(
+            alignment: chat[index].from == loggedInUser!.uid ?
+            Alignment.topRight : Alignment.topLeft,
+            child:  Container(
+              padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: (chat[index].from == loggedInUser!.uid ?Colors.green.shade200:Colors.blue[200]),
+                ),
+                padding: EdgeInsets.all(16),
+                child: Text(chat[index].message, style: TextStyle(fontSize: 15),),
+              ),
+            ),
+          );
+        },),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    streamController.close();
+  }
+
 }

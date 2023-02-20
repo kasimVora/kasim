@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if(authInst.currentUser!=null){
       userRef.doc(authInst.currentUser!.uid).snapshots().listen((event) {
         loggedInUser = UserModel.fromJson(event.data()!);
-        print(jsonEncode(loggedInUser));
+       // print(jsonEncode(loggedInUser));
       },
       ).onError((error){
         print("Listen failed: $error");

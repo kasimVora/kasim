@@ -171,7 +171,7 @@ class _FollowerFollowingListState extends State<FollowerFollowingList> {
         if(!streamController.isClosed){
           streamController.sink.add(list);
         }
-      });
+      }).onError((error) => print(error.toString()));
 
   }
 }
