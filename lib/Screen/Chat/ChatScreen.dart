@@ -43,8 +43,8 @@ class _ChatScreenState extends State<ChatScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           StreamBuilder(
-            stream: streamController.stream,
-            builder: (_, AsyncSnapshot<List<ChatModel>> snapshot) {
+            stream: chatRef.where("participants",arrayContainsAny: [widget.targetUser.uid,loggedInUser!.uid] ).snapshots(),
+            builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return postList(snapshot);
               } else {
@@ -99,40 +99,50 @@ class _ChatScreenState extends State<ChatScreen> {
         from: loggedInUser!.uid,
         to: widget.targetUser.uid,
         imgUrl: widget.targetUser.imgUrl,
-        type: "1");
-    chatRef.doc(chatId).collection(chatId).add(model.toJson());
-    chatRef.doc(chatId).set({
-      "users":FieldValue.arrayUnion([widget.targetUser.uid,loggedInUser!.uid]),
-      "imgUrl":widget.targetUser.imgUrl,
-      "lastMsg":messageCon.text.trim(),
-      "created":DateTime.now()
-    });
+        type: "1", participants: [widget.targetUser.uid,loggedInUser!.uid]);
+   
+    // chatRef.doc(chatId).collection(chatId).add(model.toJson());
+    // chatRef.doc(chatId).set({
+    //   "users":FieldValue.arrayUnion([widget.targetUser.uid,loggedInUser!.uid]),
+    //   "imgUrl":widget.targetUser.imgUrl,
+    //   "lastMsg":messageCon.text.trim(),
+    //   "created":DateTime.now()
+    // });
+    
+    chatRef.add(model.toJson());
+    
     messageFoc.unfocus();
     messageCon.text = '';
   }
 
   genrateChatId() {
-    chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).collection(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).get().then((value) {
-      if(value.docs.isNotEmpty){
-        chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
-        getData();
-      }else{
-        chatRef.doc(widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5)).collection(widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5)).get().then((value) {
-          if(value.docs.isNotEmpty){
-            chatId = widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5);
-            getData();
-          }else{
-            chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).set({});
-            chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
-            getData();
-          }
-        });
-      }
-    });
+    // chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).collection(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).get().then((value) {
+    //   if(value.docs.isNotEmpty){
+    //     chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
+    //     getData();
+    //   }else{
+    //     chatRef.doc(widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5)).collection(widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5)).get().then((value) {
+    //       if(value.docs.isNotEmpty){
+    //         chatId = widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5);
+    //         getData();
+    //       }else{
+    //         chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).set({});
+    //         chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
+    //         getData();
+    //       }
+    //     });
+    //   }
+    // });
   }
 
-  Widget postList(AsyncSnapshot<List<ChatModel>> snapshot) {
-    List<ChatModel> chat = snapshot.data!;
+  Widget postList(AsyncSnapshot<QuerySnapshot> snapshot) {
+    List<ChatModel> chat = [];
+
+    snapshot.data!.docs.map((e) {
+      chat.add(ChatModel.fromJson(e.data() as Map<String,dynamic>));
+    });
+
+
     return Expanded(
       child: ListView.builder(
         shrinkWrap: true,

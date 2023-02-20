@@ -20,7 +20,7 @@ final userRef = FirebaseFirestore.instance.collection('user');
 final chatRef = FirebaseFirestore.instance.collection('chat');
 final postRef = FirebaseFirestore.instance.collection('Post');
 NotificationService notificationService = NotificationService();
-FirebaseMessaging messaging = FirebaseMessaging.instance;
+FirebaseMessaging messaging = FirebaseMessaging.instance;76
 late List<CameraDescription> cameras;
 
 

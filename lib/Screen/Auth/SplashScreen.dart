@@ -18,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     Timer(const Duration(seconds: 2), () async{
       if(authInst.currentUser!= null) {
        loggedInUser =  await getUserFromUid(authInst.currentUser!.uid);

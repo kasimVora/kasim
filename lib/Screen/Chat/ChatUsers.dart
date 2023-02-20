@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase__test/Helper/FirebaseHelperFunction.dart';
 import 'package:firebase__test/Model/UserModel.dart';
 import 'package:firebase__test/main.dart';
 import 'package:flutter/material.dart';
+
+import '../../Model/ChatModel.dart';
 
 class ChatUsers extends StatefulWidget {
   const ChatUsers({Key? key}) : super(key: key);
@@ -29,8 +32,14 @@ class _ChatUsersState extends State<ChatUsers> {
        crossAxisAlignment: CrossAxisAlignment.start,
        children: [
          StreamBuilder(
-           stream: streamController.stream,
-           builder: (_, AsyncSnapshot<List<UserModel>> snapshot) {
+           stream: chatRef.where("participants",arrayContains: [loggedInUser!.uid]).snapshots(),
+           builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+             List<ChatModel> chat = [];
+
+             snapshot.data!.docs.map((e) {
+               chat.add(ChatModel.fromJson(e.data() as Map<String,dynamic>));
+             });
+
              if (snapshot.hasData) {
                return Text("");
              } else {

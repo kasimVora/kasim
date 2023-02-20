@@ -6,12 +6,14 @@ class ChatModel  {
   String to = '';
   String type= '';
   String imgUrl= '';
+  List<String> participants = [];
 
   ChatModel({
        required this.userName,
        required this.message,
        required this.created,
        required this.from,
+       required this.participants,
        required this.to,
        required this.imgUrl,
        required this.type});
@@ -24,6 +26,11 @@ class ChatModel  {
     to = json['to'];
     type = json['type'];
     imgUrl = json['imgUrl'];
+     if(json['participants']!=null){
+       for(var i in json['participants']){
+         participants.add(i);
+       }
+     }
   }
 
   Map<String, dynamic> toJson() {
@@ -35,6 +42,7 @@ class ChatModel  {
     data['to'] = to;
     data['type'] = type;
     data['imgUrl'] = imgUrl;
+    data['participants'] = participants;
     return data;
   }
 }
