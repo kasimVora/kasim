@@ -42,8 +42,8 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          StreamBuilder(
-            stream: chatRef.where("participants",arrayContainsAny: [widget.targetUser.uid,loggedInUser!.uid] ).snapshots(),
+          StreamBuilder(//
+            stream: chatRef.where("participants",arrayContainsAny: [loggedInUser!.uid]).snapshots(),
             builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return postList(snapshot);
@@ -93,7 +93,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void sendMessage() async{
     ChatModel model = ChatModel(
-        userName: loggedInUser!.userName,
+        userName: widget.targetUser.userName,
         message: messageCon.text.trim(),
         created: DateTime.now(),
         from: loggedInUser!.uid,
@@ -137,10 +137,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget postList(AsyncSnapshot<QuerySnapshot> snapshot) {
     List<ChatModel> chat = [];
+    print("object");
+    print(snapshot.data!.docs.length);
+    for(var i in snapshot.data!.docs){
+      var object = i.data() as Map<String,dynamic>;
+      if(object["participants"].contains(widget.targetUser.uid)){
+        chat.add(ChatModel.fromJson(object));
+      }
+    }
 
-    snapshot.data!.docs.map((e) {
-      chat.add(ChatModel.fromJson(e.data() as Map<String,dynamic>));
-    });
 
 
     return Expanded(

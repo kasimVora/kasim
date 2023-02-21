@@ -20,7 +20,7 @@ final userRef = FirebaseFirestore.instance.collection('user');
 final chatRef = FirebaseFirestore.instance.collection('chat');
 final postRef = FirebaseFirestore.instance.collection('Post');
 NotificationService notificationService = NotificationService();
-FirebaseMessaging messaging = FirebaseMessaging.instance;76
+FirebaseMessaging messaging = FirebaseMessaging.instance;
 late List<CameraDescription> cameras;
 
 
@@ -31,8 +31,8 @@ void main() async {
 
   cameras = await availableCameras();
 
-  // await notificationService.init();
-  // await notificationService.requestIOSPermissions();
+  await notificationService.init();
+   await notificationService.requestIOSPermissions();
   // await FirebaseMessaging.instance.setAutoInitEnabled(true);
   // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true,);
   // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
