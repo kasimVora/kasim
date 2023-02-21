@@ -17,7 +17,8 @@ import '../Auth/SplashScreen.dart';
 
 class UserProfile extends StatefulWidget {
   String uid;
-  UserProfile({Key? key,required this.uid}) : super(key: key);
+
+  UserProfile({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();
@@ -33,34 +34,33 @@ class _UserProfileState extends State<UserProfile> {
       backgroundColor: blackColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              IconButton(onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  ChatScreen(targetUser: user,)));
-              }, icon: Icon(Icons.message)),
               StreamBuilder(
                 stream: userRef.doc(widget.uid).snapshots(),
                 builder: (_, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if(snapshot.hasData){
+                  if (snapshot.hasData) {
                     return userList(snapshot);
-                  }else{
+                  } else {
                     return const SizedBox();
                   }
                 },
               ),
-              SizedBox(height: 10,),
-              if(onTap)  suggestedUser(),
-
-
-              const SizedBox(height: 50,),
+              const SizedBox(
+                height: 10,
+              ),
+              if (onTap) suggestedUser(),
+              const SizedBox(
+                height: 50,
+              ),
               StreamBuilder(
                 stream: postRef.snapshots(),
                 builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if(snapshot.hasData){
+                  if (snapshot.hasData) {
                     return postList(snapshot);
-                  }else{
+                  } else {
                     return const SizedBox();
                   }
                 },
@@ -72,38 +72,64 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  logout() async{
+  logout() async {
     await authInst.signOut();
     loggedInUser = null;
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const SplashScreen()), (Route<dynamic> route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const SplashScreen()),
+        (Route<dynamic> route) => false);
   }
 
   Widget userList(AsyncSnapshot<DocumentSnapshot> snapshot) {
-
-     user = UserModel.fromJson(snapshot.data!.data() as Map<String,dynamic>);
+    user = UserModel.fromJson(snapshot.data!.data() as Map<String, dynamic>);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(user.userName,style: whiteBoldText18),
+                child: Text(user.userName, style: whiteBoldText18),
               ),
-            loggedInUser!.uid == widget.uid ?  IconButton(onPressed: () async => logout(), icon: Icon(Icons.logout)) : const SizedBox()
+              Row(
+                children: [
+                  loggedInUser!.uid == widget.uid
+                      ? IconButton(
+                          onPressed: () async => logout(),
+                          icon: const Icon(Icons.logout))
+                      : const SizedBox(),
+                  loggedInUser!.uid != widget.uid
+                      ? IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatScreen(
+                                          targetUser: user,
+                                        )));
+                          },
+                          icon: const Icon(Icons.message))
+                      : const SizedBox(),
+                ],
+              )
             ],
           ),
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               CachedNetworkImage(
-                height: 100,width: 100,
+                height: 100,
+                width: 100,
                 imageUrl: user.imgUrl,
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
@@ -114,49 +140,75 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                   ),
                 ),
-                placeholder: (context, url) => const CircularProgressIndicator(),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
                 errorWidget: (context, url, error) => const Icon(Icons.person),
               ),
-              const SizedBox(width: 20,),
+              const SizedBox(
+                width: 20,
+              ),
               Column(
                 children: [
-                  Text(user.posts.length.toString(),style: whiteBoldText14,),
-                  Text("post",style: whiteNormalText13),
+                  Text(
+                    user.posts.length.toString(),
+                    style: whiteBoldText14,
+                  ),
+                  Text("post", style: whiteNormalText13),
                 ],
               ),
-              const SizedBox(width: 20,),
+              const SizedBox(
+                width: 20,
+              ),
               GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  FollowerFollowingList(path: "followers",uid: user.uid,)));
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FollowerFollowingList(
+                                path: "followers",
+                                uid: user.uid,
+                              )));
                 },
                 child: Column(
                   children: [
-                    Text(user.followers.length.toString(),style: whiteBoldText14),
-                    Text("followers",style: whiteNormalText13),
+                    Text(user.followers.length.toString(),
+                        style: whiteBoldText14),
+                    Text("followers", style: whiteNormalText13),
                   ],
                 ),
               ),
-              const SizedBox(width: 10,),
+              const SizedBox(
+                width: 10,
+              ),
               GestureDetector(
-                onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  FollowerFollowingList(path: "following",uid: user.uid,)));
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FollowerFollowingList(
+                                path: "following",
+                                uid: user.uid,
+                              )));
                 },
                 child: Column(
                   children: [
-                    Text(user.following.length.toString(),style: whiteBoldText14),
-                    Text("following",style: whiteNormalText13),
+                    Text(user.following.length.toString(),
+                        style: whiteBoldText14),
+                    Text("following", style: whiteNormalText13),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 10,
+          ),
           Row(
             children: [
               Expanded(
                 child: GestureDetector(
                   onTap: () async {
-                    if(loggedInUser!.following.contains(widget.uid)){
+                    if (loggedInUser!.following.contains(widget.uid)) {
                       //unfollow
 
                       List<String> followers = user.followers;
@@ -165,12 +217,16 @@ class _UserProfileState extends State<UserProfile> {
 
                       List<String> followings = loggedInUser!.following;
                       followings.remove(user.uid);
-                      userRef.doc(loggedInUser!.uid).update({"following": followings});
-
-                    }else if(loggedInUser!.uid == widget.uid){
+                      userRef
+                          .doc(loggedInUser!.uid)
+                          .update({"following": followings});
+                    } else if (loggedInUser!.uid == widget.uid) {
                       //edit profile
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfile()));
-                    }else{
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const EditProfile()));
+                    } else {
                       //follow
                       List<String> followers = user.followers;
                       followers.add(loggedInUser!.uid);
@@ -178,34 +234,48 @@ class _UserProfileState extends State<UserProfile> {
 
                       List<String> followings = loggedInUser!.following;
                       followings.add(user.uid);
-                      userRef.doc(loggedInUser!.uid).update({"following": followings});
+                      userRef
+                          .doc(loggedInUser!.uid)
+                          .update({"following": followings});
 
-                      await sendPushNotification(user.deviceToken,{
-                        "body" : "",
-                        "title": "${loggedInUser!.userName} started following you"
-                      },{
+                      await sendPushNotification(user.deviceToken, {
+                        "body": "",
+                        "title":
+                            "${loggedInUser!.userName} started following you"
+                      }, {
                         "type": "FOLLOW",
                         "uid": loggedInUser!.uid,
                       });
-
                     }
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(7)),
-                        border: Border.all(color: whiteColor,width: 1.2),
-                      color: !loggedInUser!.following.contains(widget.uid) ? blackColor : mainBlue
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(7)),
+                        border: Border.all(color: whiteColor, width: 1.2),
+                        color: !loggedInUser!.following.contains(widget.uid)
+                            ? blackColor
+                            : mainBlue),
+                    child: Text(
+                      loggedInUser!.uid == widget.uid
+                          ? "Edit profile"
+                          : loggedInUser!.following.contains(widget.uid)
+                              ? "Unfollow"
+                              : "Follow",
+                      textAlign: TextAlign.center,
+                      style: whiteBoldText14,
                     ),
-                    child: Text(loggedInUser!.uid == widget.uid ? "Edit profile" :loggedInUser!.following.contains(widget.uid) ? "Unfollow" : "Follow",textAlign: TextAlign.center,style: whiteBoldText14,),
                   ),
                 ),
               ),
-              IconButton(onPressed: (){
-                onTap = !onTap;
-                setState(() {});
-              }, icon: Icon(Icons.person_add))
+              IconButton(
+                  onPressed: () {
+                    onTap = !onTap;
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.person_add))
             ],
           )
         ],
@@ -216,29 +286,32 @@ class _UserProfileState extends State<UserProfile> {
   Widget postList(AsyncSnapshot<QuerySnapshot> snapshot) {
     List<PostModel> posts = [];
 
-    for(int i = 0 ;i<snapshot.data!.docs.length;i++){
-      var  e = snapshot.data!.docs[i].data() as Map<String,dynamic>;
-      if(user.posts.contains(snapshot.data!.docs[i].id)){
+    for (int i = 0; i < snapshot.data!.docs.length; i++) {
+      var e = snapshot.data!.docs[i].data() as Map<String, dynamic>;
+      if (user.posts.contains(snapshot.data!.docs[i].id)) {
         posts.add(PostModel.fromJson(e));
-     }
+      }
     }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child:  GridView.builder(
+      child: GridView.builder(
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4),
+              crossAxisCount: 3, crossAxisSpacing: 4, mainAxisSpacing: 4),
           itemBuilder: (_, i) {
-
-            return  GestureDetector(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  SinglePostScreen(post: posts[i].postId,)));
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SinglePostScreen(
+                              post: posts[i].postId,
+                            )));
               },
               child: CachedNetworkImage(
-                height: 200,width: 200,
+                height: 200,
+                width: 200,
                 imageUrl: posts[i].postUrl,
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
@@ -249,8 +322,10 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                   ),
                 ),
-                placeholder: (context, url) =>  Container(
-                  height: 150,width: 150,color: greysecond,
+                placeholder: (context, url) => Container(
+                  height: 150,
+                  width: 150,
+                  color: greysecond,
                 ),
                 errorWidget: (context, url, error) => const Icon(Icons.person),
               ),
@@ -261,41 +336,42 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   suggestedUser() {
-    return  StreamBuilder(
+    return StreamBuilder(
       stream: userRef.snapshots(),
       builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
         List<UserModel> users = [];
-        if(snapshot.hasData){
-          for(var i in snapshot.data!.docs){
-            UserModel obj = UserModel.fromJson(i.data() as Map<String,dynamic>);
-            if(loggedInUser!.uid != obj.uid  && !loggedInUser!.following.contains(obj.uid)){
+        if (snapshot.hasData) {
+          for (var i in snapshot.data!.docs) {
+            UserModel obj =
+                UserModel.fromJson(i.data() as Map<String, dynamic>);
+            if (loggedInUser!.uid != obj.uid &&
+                !loggedInUser!.following.contains(obj.uid)) {
               users.add(obj);
             }
           }
-          return  Column(
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if(users.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("Suggested user for you",style: whiteNormalText14,),
-              ),
-              SuggestedUser(suggestedUser: users,)
+              if (users.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Suggested user for you",
+                    style: whiteNormalText14,
+                  ),
+                ),
+              SuggestedUser(
+                suggestedUser: users,
+              )
             ],
           );
-        }else{
+        } else {
           return const SizedBox();
         }
       },
     );
   }
-
 }
-
-
-
-
-
 
 // class UserProfile extends StatefulWidget {
 //   String uid;

@@ -32,79 +32,84 @@ class _ChatUsersState extends State<ChatUsers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          StreamBuilder(
-            stream: chatRef.where("participants",arrayContainsAny: [loggedInUser!.uid]).orderBy("created",descending: true).snapshots(),
-            builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+      body: GestureDetector(
+        onHorizontalDragUpdate: (details) {
+          if (details.delta.direction <= 0) {
+            Navigator.pop(context);
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StreamBuilder(
+              stream: chatRef.where("participants",arrayContainsAny: [loggedInUser!.uid] ).orderBy("created",descending: true).snapshots(),
+              builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
 
-              if (snapshot.hasData) {
-                List<ChatModel> chat = [];
+                if (snapshot.hasData) {
+                  List<ChatModel> chat = [];
 
-                for(var i in snapshot.data!.docs){
-                  var object = i.data() as Map<String,dynamic>;
-                  object['participants'].remove(loggedInUser!.uid);
+                  for(var i in snapshot.data!.docs){
+                    var object = i.data() as Map<String,dynamic>;
+                    object['participants'].remove(loggedInUser!.uid);
 
-                  if(!chat.any((element) => element.participants.contains(object['participants'].first))){
-                    chat.add(ChatModel.fromJson(object));
+                    if(!chat.any((element) => element.participants.contains(object['participants'].first))){
+                      chat.add(ChatModel.fromJson(object));
+                    }
                   }
-                }
-                print("snapshot.data!.docs");
-                print(snapshot.data!.docs.length);
-                return Expanded(
-                  child: chat .isNotEmpty ? ListView.separated(
-                    shrinkWrap: true,
-                    primary: false,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: chat.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return GestureDetector(
-                        onTap: () async{
-                          chat[index].participants.remove(loggedInUser!.uid);
-                          UserModel target = await getUserFromUid(chat[index].participants.first);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) =>  ChatScreen(targetUser: target,)));
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl: chat[index].imgUrl,
-                                    errorWidget: (context, url, error) => const Text("error"),
-                                    imageBuilder: (context, imageProvider) => CircleAvatar(
-                                      radius:25,
-                                      backgroundImage: imageProvider,
+                  return Expanded(
+                    child: chat .isNotEmpty ? ListView.separated(
+                      shrinkWrap: true,
+                      primary: false,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: chat.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          onTap: () async{
+                            chat[index].participants.remove(loggedInUser!.uid);
+                            UserModel target = await getUserFromUid(chat[index].participants.first);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  ChatScreen(targetUser: target,)));
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: chat[index].imgUrl,
+                                      errorWidget: (context, url, error) => const Text("error"),
+                                      imageBuilder: (context, imageProvider) => CircleAvatar(
+                                        radius:25,
+                                        backgroundImage: imageProvider,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 10,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(chat[index].userName.toString()),
-                                      Text(chat[index].message.toString())
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Text(getTimeDifferenceFromNow(chat[index].created!))
-                            ],
+                                    const SizedBox(width: 10,),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(chat[index].userName.toString()),
+                                        Text(chat[index].message.toString())
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Text(getTimeDifferenceFromNow(chat[index].created!))
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }, separatorBuilder: (BuildContext context, int index) {
-                    return const Divider(color: whiteColor,);
-                  },) : const SizedBox(),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          ),
-        ],
+                        );
+                      }, separatorBuilder: (BuildContext context, int index) {
+                      return const Divider(color: whiteColor,);
+                    },) : const SizedBox(),
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
