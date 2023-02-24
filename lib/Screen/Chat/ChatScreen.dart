@@ -7,9 +7,11 @@ import 'package:firebase__test/Model/ChatModel.dart';
 import 'package:firebase__test/Model/UserModel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../Utility/Color.dart';
 import '../../Utility/Style.dart';
+import '../../Utility/Utility.dart';
 import '../../main.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -30,9 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-  //  chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
-    
-       genrateChatId();
+   chatId = getChatId(loggedInUser!.uid,widget.targetUser.uid);
   }
 
   @override
@@ -99,42 +99,16 @@ class _ChatScreenState extends State<ChatScreen> {
         created: DateTime.now(),
         from: loggedInUser!.uid,
         to: widget.targetUser.uid,
-        imgUrl: widget.targetUser.imgUrl,
+        messageId: const Uuid().v1(),
         type: "1", participants: [widget.targetUser.uid,loggedInUser!.uid]);
    
-    // chatRef.doc(chatId).collection(chatId).add(model.toJson());
-    // chatRef.doc(chatId).set({
-    //   "users":FieldValue.arrayUnion([widget.targetUser.uid,loggedInUser!.uid]),
-    //   "imgUrl":widget.targetUser.imgUrl,
-    //   "lastMsg":messageCon.text.trim(),
-    //   "created":DateTime.now()
-    // });
-    
-    chatRef.add(model.toJson());
-    
+    chatRef.doc(chatId).collection(chatId).add(model.toJson());
+    chatRef.doc(chatId).set(model.toJson());
+
     messageFoc.unfocus();
     messageCon.text = '';
   }
 
-  genrateChatId() {
-    // chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).collection(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).get().then((value) {
-    //   if(value.docs.isNotEmpty){
-    //     chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
-    //     getData();
-    //   }else{
-    //     chatRef.doc(widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5)).collection(widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5)).get().then((value) {
-    //       if(value.docs.isNotEmpty){
-    //         chatId = widget.targetUser.uid.substring(0,5) + loggedInUser!.uid.substring(0,5);
-    //         getData();
-    //       }else{
-    //         chatRef.doc(loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5)).set({});
-    //         chatId = loggedInUser!.uid.substring(0,5) + widget.targetUser.uid.substring(0,5);
-    //         getData();
-    //       }
-    //     });
-    //   }
-    // });
-  }
 
   Widget postList(AsyncSnapshot<QuerySnapshot> snapshot) {
     List<ChatModel> chat = [];
@@ -176,7 +150,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
   getData(){
-
     chatRef.doc(chatId).collection(chatId).orderBy('created', descending: true).snapshots().listen((event) {
       List<ChatModel> chats = [];
       for(var i in event.docs){
@@ -185,5 +158,7 @@ class _ChatScreenState extends State<ChatScreen> {
       streamController.sink.add(chats);
     }).onError((error) => print(error.toString()));
   }
+
+
 
 }

@@ -51,3 +51,10 @@ String getTimeDifferenceFromNow(DateTime dateTime) {
     return "${difference.inDays}d ago";
   }
 }
+
+String getChatId(String uid, String uid2) {
+  String ids = "";
+  List<String> id = "${uid}_$uid2".split("_")..sort();
+  ids = id.join("_");
+  return ids;
+}

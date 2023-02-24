@@ -42,19 +42,14 @@ class _ChatUsersState extends State<ChatUsers> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             StreamBuilder(
-              stream: chatRef.where("participants",arrayContainsAny: [loggedInUser!.uid] ).orderBy("created",descending: true).snapshots(),
+              stream: chatRef.where("participants",arrayContainsAny: [loggedInUser] ).orderBy("created",descending: true).snapshots(),
               builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
 
                 if (snapshot.hasData) {
                   List<ChatModel> chat = [];
 
                   for(var i in snapshot.data!.docs){
-                    var object = i.data() as Map<String,dynamic>;
-                    object['participants'].remove(loggedInUser!.uid);
-
-                    if(!chat.any((element) => element.participants.contains(object['participants'].first))){
-                      chat.add(ChatModel.fromJson(object));
-                    }
+                      chat.add(ChatModel.fromJson(i.data() as Map<String,dynamic>));
                   }
                   return Expanded(
                     child: chat .isNotEmpty ? ListView.separated(
@@ -77,7 +72,7 @@ class _ChatUsersState extends State<ChatUsers> {
                                 Row(
                                   children: [
                                     CachedNetworkImage(
-                                      imageUrl: chat[index].imgUrl,
+                                      imageUrl: chat[index].messageId,
                                       errorWidget: (context, url, error) => const Text("error"),
                                       imageBuilder: (context, imageProvider) => CircleAvatar(
                                         radius:25,

@@ -5,7 +5,7 @@ class ChatModel  {
   String from = '';
   String to = '';
   String type= '';
-  String imgUrl= '';
+  String messageId= '';
   List<String> participants = [];
 
   ChatModel({
@@ -15,7 +15,7 @@ class ChatModel  {
        required this.from,
        required this.participants,
        required this.to,
-       required this.imgUrl,
+       required this.messageId,
        required this.type});
 
   ChatModel.fromJson(Map<String, dynamic> json) {
@@ -25,7 +25,7 @@ class ChatModel  {
     from = json['from'];
     to = json['to'];
     type = json['type'];
-    imgUrl = json['imgUrl'];
+    messageId = json['imgUrl'];
      if(json['participants']!=null){
        for(var i in json['participants']){
          participants.add(i);
@@ -41,7 +41,7 @@ class ChatModel  {
     data['from'] = from;
     data['to'] = to;
     data['type'] = type;
-    data['imgUrl'] = imgUrl;
+    data['imgUrl'] = messageId;
     data['participants'] = participants;
     return data;
   }
