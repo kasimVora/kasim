@@ -1,3 +1,5 @@
+import 'package:firebase__test/Model/UserModel.dart';
+
 class ChatModel  {
   String userName = '';
   String message = '';
@@ -6,7 +8,7 @@ class ChatModel  {
   String to = '';
   String type= '';
   String messageId= '';
-  List<String> participants = [];
+  List<UserModel> participants = [];
 
   ChatModel({
        required this.userName,
@@ -28,7 +30,7 @@ class ChatModel  {
     messageId = json['imgUrl'];
      if(json['participants']!=null){
        for(var i in json['participants']){
-         participants.add(i);
+         participants.add(UserModel.fromJson(i));
        }
      }
   }
@@ -42,7 +44,7 @@ class ChatModel  {
     data['to'] = to;
     data['type'] = type;
     data['imgUrl'] = messageId;
-    data['participants'] = participants;
+    data['participants'] = participants.map((model) => model.toJson()).toList();
     return data;
   }
 }

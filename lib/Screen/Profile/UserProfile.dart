@@ -27,6 +27,8 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   late UserModel user;
   bool onTap = false;
+  int index = 0;
+  PageController controller=PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class _UserProfileState extends State<UserProfile> {
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
+            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               StreamBuilder(
@@ -55,16 +58,53 @@ class _UserProfileState extends State<UserProfile> {
               const SizedBox(
                 height: 50,
               ),
-              StreamBuilder(
-                stream: postRef.snapshots(),
-                builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    return postList(snapshot);
-                  } else {
-                    return const SizedBox();
-                  }
-                },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(onPressed: (){
+                    controller.jumpToPage(0);
+                    setState(() {});
+                  }, icon: Icon(Icons.post_add,color: whiteColor,)),
+                  IconButton(onPressed: (){
+                    controller.jumpToPage(1);
+                    setState(() {});
+                  }, icon: Icon(Icons.save,color: whiteColor,)),
+                ],
               ),
+              SizedBox(
+                height: 100,
+                child: PageView(
+                  controller: controller,
+                  children: [
+                    StreamBuilder(
+                      stream: postRef.snapshots(),
+                      builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          return postList(snapshot);
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
+                    StreamBuilder(
+                      stream: postRef.snapshots(),
+                      builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          return postList2(snapshot);
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
+                  ],
+                  onPageChanged: (num){
+                    setState(() {
+                      index = num;
+                    });
+                  },
+                ),
+              )
+
             ],
           ),
         ),
@@ -334,6 +374,60 @@ class _UserProfileState extends State<UserProfile> {
           itemCount: posts.length),
     );
   }
+
+  Widget postList2(AsyncSnapshot<QuerySnapshot> snapshot) {
+    List<PostModel> posts = [];
+
+    for (int i = 0; i < snapshot.data!.docs.length; i++) {
+      var e = snapshot.data!.docs[i].data() as Map<String, dynamic>;
+      if (user.savedPosts.contains(snapshot.data!.docs[i].id)) {
+        posts.add(PostModel.fromJson(e));
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+          shrinkWrap: true,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, crossAxisSpacing: 4, mainAxisSpacing: 4),
+          itemBuilder: (_, i) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SinglePostScreen(
+                              post: posts[i].postId,
+                            )));
+              },
+              child: CachedNetworkImage(
+                height: 200,
+                width: 200,
+                imageUrl: posts[i].postUrl,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => Container(
+                  height: 150,
+                  width: 150,
+                  color: greysecond,
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.person),
+              ),
+            );
+          },
+          itemCount: posts.length),
+    );
+  }
+
+
 
   suggestedUser() {
     return StreamBuilder(

@@ -42,7 +42,7 @@ class _ChatUsersState extends State<ChatUsers> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             StreamBuilder(
-              stream: chatRef.where("participants",arrayContainsAny: [loggedInUser] ).orderBy("created",descending: true).snapshots(),
+              stream: chatRef.where("participants",arrayContainsAny: [loggedInUser!.toJson()] ).orderBy("created",descending: true).snapshots(),
               builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
 
                 if (snapshot.hasData) {
@@ -59,10 +59,9 @@ class _ChatUsersState extends State<ChatUsers> {
                       itemCount: chat.length,
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
-                          onTap: () async{
-                            chat[index].participants.remove(loggedInUser!.uid);
-                            UserModel target = await getUserFromUid(chat[index].participants.first);
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  ChatScreen(targetUser: target,)));
+                          onTap: () {
+                            chat[index].participants.remove(loggedInUser!);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  ChatScreen(targetUser: chat[index].participants.first,)));
                           },
                           child: Container(
                             padding: const EdgeInsets.all(10),
@@ -72,7 +71,7 @@ class _ChatUsersState extends State<ChatUsers> {
                                 Row(
                                   children: [
                                     CachedNetworkImage(
-                                      imageUrl: chat[index].messageId,
+                                      imageUrl: chat[index].participants.where((element) => element != loggedInUser).first.imgUrl,
                                       errorWidget: (context, url, error) => const Text("error"),
                                       imageBuilder: (context, imageProvider) => CircleAvatar(
                                         radius:25,

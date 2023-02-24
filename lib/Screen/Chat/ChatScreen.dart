@@ -43,8 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           StreamBuilder(//
-            stream: chatRef.where("participants",whereIn:
-            [[widget.targetUser.uid,loggedInUser!.uid],[loggedInUser!.uid,widget.targetUser.uid]]).snapshots(),
+            stream: chatRef.doc(chatId).collection(chatId).snapshots(),
             builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return postList(snapshot);
@@ -62,6 +61,9 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextFormField(
                 controller: messageCon,
                 focusNode: messageFoc,
+                onFieldSubmitted: (value){
+                  sendMessage();
+                },
                 decoration: InputDecoration(
                   fillColor: Colors.white,
                   filled: false,
@@ -92,7 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void sendMessage() async{
+  void sendMessage() {
     ChatModel model = ChatModel(
         userName: widget.targetUser.userName,
         message: messageCon.text.trim(),
@@ -100,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
         from: loggedInUser!.uid,
         to: widget.targetUser.uid,
         messageId: const Uuid().v1(),
-        type: "1", participants: [widget.targetUser.uid,loggedInUser!.uid]);
+        type: "1", participants: [widget.targetUser,loggedInUser!]);
    
     chatRef.doc(chatId).collection(chatId).add(model.toJson());
     chatRef.doc(chatId).set(model.toJson());
@@ -117,7 +119,7 @@ class _ChatScreenState extends State<ChatScreen> {
         chat.add(ChatModel.fromJson(object));
     }
     return Expanded(
-      child: ListView.builder(
+      child: chat.isNotEmpty ? ListView.builder(
         shrinkWrap: true,
         primary: false,
         physics: const BouncingScrollPhysics(),
@@ -127,18 +129,18 @@ class _ChatScreenState extends State<ChatScreen> {
             alignment: chat[index].from == loggedInUser!.uid ?
             Alignment.topRight : Alignment.topLeft,
             child:  Container(
-              padding: EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
+              padding: const EdgeInsets.only(left: 14,right: 14,top: 10,bottom: 10),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: (chat[index].from == loggedInUser!.uid ?Colors.green.shade200:Colors.blue[200]),
                 ),
-                padding: EdgeInsets.all(16),
-                child: Text(chat[index].message, style: TextStyle(fontSize: 15),),
+                padding: const EdgeInsets.all(16),
+                child: Text(chat[index].message, style: const TextStyle(fontSize: 15),),
               ),
             ),
           );
-        },),
+        },) :  Container(),
     );
   }
 
