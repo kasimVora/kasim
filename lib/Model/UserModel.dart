@@ -8,6 +8,9 @@ class UserModel {
   List<String> following = [];
   List<String> posts = [];
   List<String> savedPosts = [];
+  bool isOnline = false;
+  String name = '';
+  String bio = '';
 
   UserModel({
       required  this.phoneNumber,
@@ -18,14 +21,20 @@ class UserModel {
       required  this.following,
       required  this.deviceToken,
       required  this.savedPosts,
+      required  this.isOnline,
+      required  this.bio,
+      required  this.name,
       required  this.posts
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
     phoneNumber = json['phone_number'];
     uid = json['uid'];
+    name = json['name']??"";
+    bio = json['bio']??"";
     userName = json['user_name'];
     imgUrl = json['img_url'];
+    isOnline = json['isOnline'];
 
     if(json['followers']!=null && json['followers'].isNotEmpty){
       for(var i in json['followers']){
@@ -59,9 +68,12 @@ class UserModel {
     data['followers'] = followers;
     data['following'] = following;
     data['img_url'] = imgUrl;
+    data['isOnline'] = isOnline;
     data['posts'] = posts;
     data['device_token'] = deviceToken;
     data['savedPosts'] = savedPosts;
+    data['name'] = name;
+    data['bio'] = bio;
     return data;
   }
 }

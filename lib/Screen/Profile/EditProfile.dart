@@ -44,7 +44,12 @@ class _EditProfileState extends State<EditProfile> {
                    ],
                  ),
                   IconButton(onPressed: (){
-                    userRef.doc(loggedInUser!.uid).update({"user_name":userNameCon.text.trim()}).whenComplete(() {
+                    userRef.doc(loggedInUser!.uid).update(
+                        {
+                          "user_name":userNameCon.text.trim(),
+                          "name":nameCon.text.trim(),
+                          "bio":bioCon.text.trim()
+                        }).whenComplete(() {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Profile updated successfully")));});
                   }, icon: const Icon(Icons.check,color: blueColor,size: 30,)),
                 ]

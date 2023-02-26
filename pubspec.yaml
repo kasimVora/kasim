@@ -39,6 +39,7 @@ dependencies:
   firebase_core: ^2.4.1
   firebase_auth:
   firebase_messaging:
+  firebase_database:
   cloud_firestore:
   uuid:
   image_picker:

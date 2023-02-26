@@ -29,31 +29,28 @@ class _PostScreenState extends State<PostScreen> {
     // SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       backgroundColor: blackColor,
-      body: GestureDetector(
-        onHorizontalDragUpdate: (details) {
-          if (details.delta.direction > 0) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatUsers()));
-          }
-        },
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              StreamBuilder(
-                stream: postRef.snapshots(),
-                builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    return postList(snapshot);
-                  } else {
-                    return const SizedBox();
-                  }
-                },
-              ),
-            ],
-          ),
+      appBar: AppBar(title: Text("Chat App"),
+      actions: [
+        IconButton(onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatUsers()));
+
+        }, icon: Icon(Icons.maps_ugc_outlined))
+      ],),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            StreamBuilder(
+              stream: postRef.snapshots(),
+              builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  return postList(snapshot);
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

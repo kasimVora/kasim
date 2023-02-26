@@ -18,7 +18,7 @@ import '../Model/UserModel.dart';
 import '../main.dart';
 import 'MediaPicker.dart';
 
-
+import 'package:flutter/widgets.dart';
 import 'PostScreen/PostScreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,13 +28,14 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int selectedIndex = 0;
   Widget currentScreen = const PostScreen();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     initServices();
   }
 
@@ -76,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   openPicker() {
     InstaAssetPicker.pickAssets(
       context,
@@ -107,14 +109,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void initServices() {
+
+
+
+
     if(authInst.currentUser!=null){
-      // userRef.doc(authInst.currentUser!.uid).snapshots().listen((event) {
-      //   loggedInUser = UserModel.fromJson(event.data()!);
-      //  // print(jsonEncode(loggedInUser));
-      // },
-      // ).onError((error){
-      //   print("Listen failed: $error");
-      // });
+
+
+      userRef.doc(loggedInUser!.uid).update({"isOnline": true});
+      userRef.doc(authInst.currentUser!.uid).snapshots().listen((event) {
+        loggedInUser = UserModel.fromJson(event.data()!);
+       // print(jsonEncode(loggedInUser));
+      },
+      ).onError((error){
+        print("Listen failed: $error");
+      });
 
 
       ///PUSH NOTIFICATION SETUP
@@ -133,6 +142,22 @@ class _HomeScreenState extends State<HomeScreen> {
       //   notificationService.showNotification(message.hashCode,notification!.title!,notification.body!,jsonEncode(message.data));
       // });
     }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+     if(state == AppLifecycleState.resumed){
+       userRef.doc(loggedInUser!.uid).update({"isOnline": true});
+     }else {
+       userRef.doc(loggedInUser!.uid).update({"isOnline": false});
+     }
+
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }
 

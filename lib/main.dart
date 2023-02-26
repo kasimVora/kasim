@@ -19,6 +19,7 @@ FirebaseStorage storageRef = FirebaseStorage.instance;
 final userRef = FirebaseFirestore.instance.collection('user');
 final chatRef = FirebaseFirestore.instance.collection('chat');
 final postRef = FirebaseFirestore.instance.collection('Post');
+final firebaseDbInst = FirebaseFirestore.instance.collection('.info').doc('connected');
 NotificationService notificationService = NotificationService();
 FirebaseMessaging messaging = FirebaseMessaging.instance;
 late List<CameraDescription> cameras;

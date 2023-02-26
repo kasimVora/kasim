@@ -32,15 +32,11 @@ class _ChatUsersState extends State<ChatUsers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onHorizontalDragUpdate: (details) {
-          if (details.delta.direction <= 0) {
-            Navigator.pop(context);
-          }
-        },
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 20,),
             StreamBuilder(
               stream: chatRef.where("participants",arrayContainsAny: [loggedInUser!.toJson()] ).orderBy("created",descending: true).snapshots(),
               builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -107,6 +103,6 @@ class _ChatUsersState extends State<ChatUsers> {
       ),
     );
   }
-
-
 }
+
+

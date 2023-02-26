@@ -145,7 +145,7 @@ class _CompleteProfileState extends State<CompleteProfile> {
 
   void saveUser(String url) {
     messaging.getToken().then((value) {
-      UserModel user = UserModel(userName: userName.text, phoneNumber: widget.phone, uid: widget.uid, imgUrl: url, deviceToken: value!, followers: [], following: [], posts: [], savedPosts: []);
+      UserModel user = UserModel(userName: userName.text, phoneNumber: widget.phone, uid: widget.uid, imgUrl: url, deviceToken: value!, followers: [], following: [], posts: [], savedPosts: [], isOnline: true, bio: '', name: '');
       userRef.doc(user.uid).set(user.toJson()).
       whenComplete(() async{
         Navigator.pop(context);

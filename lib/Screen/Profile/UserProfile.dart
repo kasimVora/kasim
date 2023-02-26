@@ -35,84 +35,83 @@ class _UserProfileState extends State<UserProfile> {
     return Scaffold(
       backgroundColor: blackColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              StreamBuilder(
-                stream: userRef.doc(widget.uid).snapshots(),
-                builder: (_, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    return userList(snapshot);
-                  } else {
-                    return const SizedBox();
-                  }
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            StreamBuilder(
+              stream: userRef.doc(widget.uid).snapshots(),
+              builder: (_, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  return userList(snapshot);
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            if (onTap) suggestedUser(),
+            const SizedBox(
+              height: 50,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(onPressed: (){
+                  controller.jumpToPage(0);
+                  setState(() {});
+                }, icon:  Icon(
+                  Icons.grid_on_rounded,color: index == 0 ? whiteColor : grey,
+                )),
+                   if( widget.uid == loggedInUser!.uid ) IconButton(onPressed: (){
+                  controller.jumpToPage(1);
+                  setState(() {});
+                }, icon:  Icon(Icons.bookmark_outline,color: index == 1 ? whiteColor : grey,)),
+              ],
+            ),
+            Expanded(
+              child: PageView(
+                controller: controller,
+                children: [
+                  StreamBuilder(
+                    stream: postRef.snapshots(),
+                    builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        return postList(snapshot);
+                      } else {
+                        return const SizedBox();
+                      }
+                    },
+                  ),
+                  StreamBuilder(
+                    stream: postRef.snapshots(),
+                    builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        return postList2(snapshot);
+                      } else {
+                        return const SizedBox();
+                      }
+                    },
+                  ),
+                ],
+                onPageChanged: (num){
+                  setState(() {
+                    index = num;
+                  });
                 },
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              if (onTap) suggestedUser(),
-              const SizedBox(
-                height: 50,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(onPressed: (){
-                    controller.jumpToPage(0);
-                    setState(() {});
-                  }, icon: Icon(Icons.post_add,color: whiteColor,)),
-                  IconButton(onPressed: (){
-                    controller.jumpToPage(1);
-                    setState(() {});
-                  }, icon: Icon(Icons.save,color: whiteColor,)),
-                ],
-              ),
-              SizedBox(
-                height: 100,
-                child: PageView(
-                  controller: controller,
-                  children: [
-                    StreamBuilder(
-                      stream: postRef.snapshots(),
-                      builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          return postList(snapshot);
-                        } else {
-                          return const SizedBox();
-                        }
-                      },
-                    ),
-                    StreamBuilder(
-                      stream: postRef.snapshots(),
-                      builder: (_, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          return postList2(snapshot);
-                        } else {
-                          return const SizedBox();
-                        }
-                      },
-                    ),
-                  ],
-                  onPageChanged: (num){
-                    setState(() {
-                      index = num;
-                    });
-                  },
-                ),
-              )
+            )
 
-            ],
-          ),
+          ],
         ),
       ),
     );
   }
 
   logout() async {
+    userRef.doc(loggedInUser!.uid).update({"isOnline": false});
     await authInst.signOut();
     loggedInUser = null;
     Navigator.of(context).pushAndRemoveUntil(
@@ -155,7 +154,7 @@ class _UserProfileState extends State<UserProfile> {
                                           targetUser: user,
                                         )));
                           },
-                          icon: const Icon(Icons.message))
+                          icon: const Icon(Icons.maps_ugc_outlined))
                       : const SizedBox(),
                 ],
               )
@@ -447,13 +446,6 @@ class _UserProfileState extends State<UserProfile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (users.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Suggested user for you",
-                    style: whiteNormalText14,
-                  ),
-                ),
               SuggestedUser(
                 suggestedUser: users,
               )

@@ -19,10 +19,11 @@ class SuggestedUser extends StatefulWidget {
 class _SuggestedUserState extends State<SuggestedUser> {
   @override
   Widget build(BuildContext context) {
-    return widget.suggestedUser.isNotEmpty ? SizedBox(
+    return widget.suggestedUser.isNotEmpty ? Container(
       width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.only(left: 5),
       height: 190,
-      child:  ListView.separated(
+      child: widget.suggestedUser.isNotEmpty ?  ListView.separated(
           shrinkWrap: true,
           primary: false,
           scrollDirection: Axis.horizontal,
@@ -31,7 +32,7 @@ class _SuggestedUserState extends State<SuggestedUser> {
             return userItem(index);
           }, separatorBuilder: (BuildContext context, int index) {
             return SizedBox(width: 10,);
-      },) ,
+      },) : SizedBox(),
     ) : const SizedBox();
   }
 
