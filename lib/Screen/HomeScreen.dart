@@ -85,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       maxAssets: 1,
       pickerTheme: ThemeData.light(),
       closeOnComplete: true,
-      isSquareDefaultCrop: true,
       useRootNavigator: true,
       onCompleted: (cropStream) {
         cropStream.listen((event) async{
